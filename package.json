@@ -1,0 +1,20 @@
+{
+  "name": "simple-static",
+  "version": "0.0.1",
+  "description": "SimpleStatic is a generator static content for creating static HTML sites",
+  "private": true,
+  "scripts": {
+    "run": "node src/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsdom": "^16.4.0",
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^16.2.5",
+    "chalk": "^4.1.0"
+  }
+}
