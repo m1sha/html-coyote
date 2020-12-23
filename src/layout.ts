@@ -1,36 +1,32 @@
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+import DomProvider from "./dom-provider"
+import { Page } from "./page"
+import { PartCollection } from "./part"
 
-class Layout{
-    constructor({name, content}){
-        this.name = name
-        this.content = content
+export class Layout extends DomProvider {
+
+    _data: object = {} 
+
+    constructor(name: string, content: string){
+        super(name, content)
     }
 
-    init(){
-        this.dom = new JSDOM(this.content)
-        const { document } = this.dom.window
-        this.document = document
-        return this
-    }
-
-    data(data){
+    data(data: object){
         this._data = data
         return this
     }
 
-    applyPage({templates}){
+    applyPage(page: Page){
         const slots = this.document.getElementsByTagName("slot")
         while(slots.length > 0){
             const slot = slots[0]
-            const frag = templates[slot.name]
-            slot.replaceWith(JSDOM.fragment(frag))
+            const frag = page.templates[slot.name]
+            slot.replaceWith(this.fragment(frag))
         }
         
         return this
     }
 
-    applyParts(parts){
+    applyParts(parts: PartCollection){
 
         for(const part of parts){
            const elems = this.document.getElementsByTagName(part.name)
@@ -52,7 +48,7 @@ class Layout{
 
             const partHtml = part.applyTemplate(part.template, data)
 
-            elem.replaceWith(JSDOM.fragment(partHtml))
+            elem.replaceWith(this.fragment(partHtml))
 
            }
         }
@@ -66,12 +62,15 @@ class Layout{
 
 }
 
-class LayoutCollection{
+export class LayoutCollection{
+    items: Layout[]
+    length: number
+
     constructor(files){
         this.items = []
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            this.items.push(new Layout(file))
+            this.items.push(new Layout(file.name, file.content))
         }
         this.length = this.items.length
     }
@@ -86,4 +85,3 @@ class LayoutCollection{
 }
 
 
-module.exports = {Layout, LayoutCollection}

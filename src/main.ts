@@ -1,5 +1,5 @@
-const chalk = require('chalk');
-const Site = require("./site")
+import chalk from 'chalk'
+import { Site } from "./site"
 
 const site = new Site("../site")
 const layouts = site.layouts

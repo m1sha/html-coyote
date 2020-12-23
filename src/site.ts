@@ -1,11 +1,13 @@
-const fs = require("fs")
-const path = require("path")
-const { PageCollection } = require("./page")
-const { LayoutCollection } = require("./layout")
-const { PartCollection } = require("./part")
+import fs from "fs"
+import path from "path"
+import { PageCollection } from "./page"
+import { LayoutCollection } from "./layout"
+import { PartCollection } from "./part"
 
-class Site{
-    constructor(basepath){
+export class Site{
+    path: string
+
+    constructor(basepath: string){
         this.path = path.resolve(__dirname, basepath)
     }
 
@@ -21,7 +23,7 @@ class Site{
         return new LayoutCollection(loadfiles(join(this.path, "layouts")))
     }
 
-    publishPage(name, html){
+    publishPage(name: string, html: string){
         const publishPath = path.resolve(this.path, "../publish")
         mkdir(publishPath)
         const filename = join(publishPath, name + ".html")
@@ -29,7 +31,7 @@ class Site{
     }
 }
 
-const loadfiles = (dir) => { 
+const loadfiles = (dir: string) => { 
     var files = ls(dir)
     const result = []
     for (let index = 0; index < files.length; index++) {
@@ -50,15 +52,18 @@ const loadfiles = (dir) => {
     return result
 }
 
-const rf = (filename) => fs.readFileSync(filename,'utf8')
-const join = (...paths)=> path.join(...paths)
-const ls = (dir) => fs.readdirSync(dir)
-const if_f = (filename) => fs.lstatSync(filename).isFile()
-const if_d = (dir) =>fs.lstatSync(dir).isDirectory()
-const mkdir = (dir) => fs.mkdirSync(dir, { recursive: true })
+const rf = (filename: string) => fs.readFileSync(filename,'utf8')
+const join = (...paths: string[])=> path.join(...paths)
+const ls = (dir: string) => fs.readdirSync(dir)
+const if_f = (filename: string) => fs.lstatSync(filename).isFile()
+const if_d = (dir: string) =>fs.lstatSync(dir).isDirectory()
+const mkdir = (dir: string) => fs.mkdirSync(dir, { recursive: true })
 
-class HtmlFile {
-    constructor (name, fullName){
+export class HtmlFile {
+    name: string
+    fullName: string
+
+    constructor (name: string, fullName: string){
         this.name = name
         this.fullName = fullName
     }
@@ -68,4 +73,3 @@ class HtmlFile {
     }
 }
 
-module.exports = Site

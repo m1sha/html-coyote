@@ -1,6 +1,12 @@
-const TemplateProvider = require("./template-provider")
-class Part extends TemplateProvider {
-    constructor({name, content}){
+import { HtmlFile } from "./site"
+import TemplateProvider  from "./template-provider"
+
+export class Part extends TemplateProvider {
+    name: string
+    template: string
+    attrs: string[]
+
+    constructor(name: string, content: string){
         super()
         
         this.name = name
@@ -31,12 +37,15 @@ class Part extends TemplateProvider {
     }
 }
 
-class PartCollection {
-    constructor(files){
+export class PartCollection {
+    items: Part[]
+    length: number
+
+    constructor(files: HtmlFile[]){
         this.items = []
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            this.items.push(new Part(file))
+            this.items.push(new Part(file.name, file.content))
         }
         this.length = this.items.length
     }
@@ -54,5 +63,3 @@ class PartCollection {
         }
     }
 }
-
-module.exports = { Part, PartCollection }

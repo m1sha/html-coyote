@@ -1,11 +1,18 @@
-const jsdom = require("jsdom");
+import jsdom  from "jsdom"
 const { JSDOM } = jsdom;
 
-class Page {
+export class Page {
 
-    constructor({name, content}){
+    name: string
+    content: string
+    dom: jsdom.JSDOM
+    document: Document
+
+    constructor(name: string, content: string){
         this.name = name
         this.content = content
+        this.dom = new JSDOM('')
+        this.document = this.dom.window.document
     }
 
     init(){
@@ -19,7 +26,7 @@ class Page {
         const r = {}
         for(let i=0; i < templates.length; i++){
             const template = templates[i]
-            const slot = template.attributes["slot"]
+            const slot = template.attributes.getNamedItem("slot")
             r[slot.nodeValue] = template.innerHTML
             //r.push({ name: slot.nodeValue, content : template.innerHTML})
         }
@@ -44,12 +51,15 @@ class Page {
 
 }
 
-class PageCollection{
+export class PageCollection{
+    items: Page[]
+    length: number
+
     constructor(files){
         this.items = []
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            this.items.push(new Page(file))
+            this.items.push(new Page(file.name, file.content))
         }
         this.length = this.items.length
     }
@@ -67,5 +77,3 @@ class PageCollection{
         }
     }
 }
-
-module.exports = { Page, PageCollection }

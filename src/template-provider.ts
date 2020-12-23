@@ -1,10 +1,13 @@
-const _ = require("lodash")
+import * as _ from "lodash"
 
-class TemplateProvider{
+export default class TemplateProvider{
+
+    constructor(){
+
+    }
+
     applyTemplate(html, data){
         const comp =  _.template(html)
         return comp(data)
     }
 }
-
-module.exports = TemplateProvider
