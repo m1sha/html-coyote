@@ -1,0 +1,13 @@
+__pageName: galary
+__usage: full #part
+#__filename: [name]#
+cards: 
+  - title: 'asd asd asdsad'
+    descripton: 'asda asd asd asd'
+    src: '/imgs/01'
+  - title: 'dasdad adasda dasd'
+    descripton: 'asda asd asd asd'
+    src: '/imgs/02'
+  - title: 'dsd hfbfb tyrty'
+    descripton: 'jkjk lnnnbbvf fjjjhj'
+    src: '/imgs/03'

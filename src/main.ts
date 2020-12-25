@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import cli from './cli'
 import { Site } from "./site"
 
 const site = new Site("../site")
@@ -6,8 +6,10 @@ const layouts = site.layouts
 const pages = site.pages
 const parts = site.parts
 
-console.log(chalk.whiteBright(`Start site assembly\n`))    
+cli.info(`Start site assembly\n`)
 for (const page of pages) {
+
+  try {
     page.init()
     const layout = layouts.getLayout(page.layoutName)
     const html = layout
@@ -18,10 +20,14 @@ for (const page of pages) {
       .applyPage(page)
       .applyParts(parts)
       .build()
+
+      site.publishPage(page.name, html)
+      cli.succ(`page: ${page.name}`)
+
+  } catch(e){
+    cli.err(`page: ${page.name}. ${e.message}`)
+  }
     
-
-    site.publishPage(page.name, html)
-    console.log(chalk.greenBright(`page: ${page.name}`))    
 }
-console.log(chalk.greenBright(`\nAssembly complited`))    
 
+cli.info(`\ncomplited`)

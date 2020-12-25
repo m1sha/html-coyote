@@ -27,8 +27,11 @@ export class Page {
         for(let i=0; i < templates.length; i++){
             const template = templates[i]
             const slot = template.attributes.getNamedItem("slot")
+            if (!slot || !slot.nodeValue) {
+                throw new Error(`tag template hasn't contain required attribute slot`)
+            }
+            
             r[slot.nodeValue] = template.innerHTML
-            //r.push({ name: slot.nodeValue, content : template.innerHTML})
         }
         return r
     }

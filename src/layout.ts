@@ -36,7 +36,17 @@ export class Layout extends DomProvider {
             const data = {... this._data}
             for(let a = 0; a< attrs.length; a++){
                 const attr = attrs[a]
-                const value = attr.startsWith("@") ? elem.innerHTML : elem.attributes[attr].nodeValue
+                let value = ''
+                if (attr.startsWith("@")){
+                    value =  elem.innerHTML
+                }else {
+                    const attrValue = elem.attributes[attr]
+                    if (!attrValue) throw new Error(`Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${attr}'`);
+
+                    value =  elem.attributes[attr].nodeValue
+                }
+
+                
                 if (!value){
                     continue
                 }
