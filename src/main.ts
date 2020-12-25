@@ -30,4 +30,13 @@ for (const page of pages) {
     
 }
 
+cli.info(`\nAssets`)
+site.publishAssets((src, dist, err)=>{
+  if (err){
+    cli.err(`${err}. ${src}`)
+    return
+  }
+  cli.succ(`${dist}`)
+
+})
 cli.info(`\ncomplited`)

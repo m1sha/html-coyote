@@ -1,0 +1,12 @@
+body {
+    font-size: 16px;
+}
+
+li{
+    display: inline;
+    padding: 8px;
+}
+
+li a{
+    color: #212121;
+}
