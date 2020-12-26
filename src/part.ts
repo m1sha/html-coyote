@@ -1,39 +1,65 @@
 import { HtmlFile } from "./site"
-import TemplateProvider  from "./template-provider"
+import DomProvider from "./dom-provider"
 
-export class Part extends TemplateProvider {
+export class Part extends DomProvider {
     name: string
-    template: string
-    attrs: string[]
+    //template: string
+    //attrs: string[]
 
     constructor(name: string, content: string){
-        super()
-        
-        this.name = name
-        this.attrs = []
-        const lines = content.split("\n")
-        let s = false
-        let l = 0;
-        for(let i=0; i<lines.length; i++){
-           const line = lines[i].replace("\r", "")
-           if (line.startsWith("--")){
-               if (s){
-                   l = i
-                   break
-               }
+        super(name, content)
+    }
 
-               s = true
-               continue
-           }
-           const attr = line.trim();
-           if (!attr){
-               continue
-           }
+    get attrs(): string[] {
+        const result = []
+        const nodes = this.document.childNodes
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            if (node.nodeType === 8 && node.nodeValue.startsWith("#")) { 
+                node.nodeValue
+                    .substring(1)
+                    .split("\n")
+                    .filter(p=>p)
+                    .map(p => {
+                        const v = p.replace("\r", "").trim()
+                        if (v.indexOf(" ") > -1 && (!v.startsWith(".") || !v.startsWith("@"))){
+                            throw new Error(`Part '${this.name}' can't parse attr '${v}'`)
+                        }
+                        return v
+                    })
+                    .forEach(p=> result.push(p))
+            }
+        }
+        return result
+    }
 
-           this.attrs.push(attr)
+    getTemplates(data: any): string[] {
+        const templates = this.document.getElementsByTagName("template")
+        const r = []
+        let _ifvalue = null
+        for(let i=0; i < templates.length; i++){
+            const template = templates[i]
+            const _if = template.attributes.getNamedItem("if")
+            if (_if && _if.nodeValue){
+                const _ifAttrValue = preparing(_if.nodeValue)
+                _ifvalue = eval(_ifAttrValue) // data injected here
+                if (_ifvalue){
+                    r.push(template.innerHTML)
+                }
+            }
+
+            const _else = template.attributes.getNamedItem("else")
+            if (_else){
+                if (_ifvalue === null) throw new Error(`Part '${this.name}' not found if statement`)
+                if (!_ifvalue) r.push(template.innerHTML)
+            }
+
+            if (!_if && !_else){
+                r.push(template.innerHTML)
+            }
         }
 
-        this.template = lines.slice( l + 1).join("\n")
+        return r
     }
 }
 
@@ -62,4 +88,19 @@ export class PartCollection {
           }
         }
     }
+}
+
+function preparing(value: string): string{
+
+    var r = value
+       .split(" ")
+       .filter(p=>p)
+       .map(p=>{
+           const chr = p.substring(0,1)
+           if ((chr >= 'a' && chr <= 'z') || chr === '_' ){
+             return "data." + p
+           }
+           return p
+       }).join(" ")
+    return r
 }

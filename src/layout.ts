@@ -29,36 +29,39 @@ export class Layout extends DomProvider {
     applyParts(parts: PartCollection){
 
         for(const part of parts){
+            part.init()
            const elems = this.document.getElementsByTagName(part.name)
            const attrs = part.attrs
            while  (elems.length > 0){
             const elem = elems[0]
             const data = {... this._data}
-            for(let a = 0; a< attrs.length; a++){
+            for(let a = 0; a < attrs.length; a++){
                 const attr = attrs[a]
                 let value = ''
+                
                 if (attr.startsWith("@")){
                     value =  elem.innerHTML
-                }else {
-                    const attrValue = elem.attributes[attr]
-                    if (!attrValue) throw new Error(`Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${attr}'`);
-
-                    value =  elem.attributes[attr].nodeValue
-                }
-
+                } 
                 
-                if (!value){
-                    continue
+                if (attr.startsWith(".")) {
+                    const a = attr.substring(1)
+                    const attrValue = elem.attributes[a]
+                    if (!attrValue) throw new Error(`Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
+
+                    value =  attrValue.nodeValue
                 }
 
-                const attrName = attr.startsWith("@") ? attr.substring(1) : attr
-
+                const attrName = attr.substring(1)
                 data[attrName] = value
             }
 
-            const partHtml = part.applyTemplate(part.template, data)
-
-            elem.replaceWith(this.fragment(partHtml))
+            const templates = part.getTemplates(data)
+            for (let i = 0; i < templates.length; i++) {
+                const template = templates[i];
+                const partHtml = part.applyTemplate(template, data)
+                elem.replaceWith(this.fragment(partHtml))
+                
+            }
 
            }
         }

@@ -7,6 +7,7 @@ export default class TemplateProvider{
     }
 
     applyTemplate(html, data){
+        _.templateSettings.interpolate = /{{([\s\S]+?)}}/g
         const comp =  _.template(html)
         return comp(data)
     }

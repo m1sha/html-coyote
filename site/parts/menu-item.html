@@ -1,11 +1,12 @@
-----------------------
-name
-href
+<!--#
+.name
+.href
 @content
-----------------------
+-->
 
-<% if (__pageName === name) {%>
-    <li><%=content%></li>
-<% } else { %>
-    <li><a href="<%-href%>"><%=content%></a></li>
-<% }  %>
+<template if="__pageName === name">
+    <li>{{content}}</li>
+</template>
+<template else>
+    <li><a href="{{href}}">{{content}}</a></li>
+</template>

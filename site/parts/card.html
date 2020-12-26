@@ -1,15 +1,21 @@
---
-title
-description
-src
---
+<!--#
+.title
+.description
+.src
+-->
 
-<div>
+<!--
+   example: <card src="image.png" title="image title" description="image description"  />
+-->
+
+<template>
     <div>
-        <img src="<%-src%>" title="<%-title%>"></title>></table> />
+        <div>
+            <img src="{{src}}" title="{{title}}" width="120" height="auto" />
+        </div>
+        <div>
+            <p>{{title}}</p>
+            <span>{{description}}</span>
+        </div>
     </div>
-    <div>
-        <p><%=title%></p>
-        <span><%=description%></span>
-    </div>
-</div>
+</template>
