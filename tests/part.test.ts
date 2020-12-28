@@ -1,6 +1,7 @@
+import { ContentInMemory } from "../src/fs-utils"
 import { Part } from "../src/part"
 
-const part = new Part("test", `
+const part = new Part(new ContentInMemory("test", `
 <!--#
 .name
 .href
@@ -13,7 +14,7 @@ const part = new Part("test", `
 <template else>
     <li><a href="{{href}}">{{content}}</a></li>
 </template>
-`)
+`))
 
 part.init()
 

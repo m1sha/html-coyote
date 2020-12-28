@@ -1,30 +1,36 @@
 import TemplateProvider  from "./template-provider"
+import {IContentFile} from "./fs-utils"
 import jsdom from "jsdom"
 const { JSDOM } = jsdom
 
 export default class DomProvider extends TemplateProvider {
-    name: string
-    content: string
-    dom: jsdom.JSDOM
-    document: Document
+    protected file: IContentFile
+    protected dom: jsdom.JSDOM
+    protected document: Document
 
-    constructor(name: string, content: string){
+    name: string
+
+    constructor(file: IContentFile) {
         super()
-        
-        this.name = name
-        this.content = content
+
+        this.file = file
+        this.name = file.name
         this.dom = new JSDOM('')
         this.document = this.dom.window.document
     }
 
-    init(){
-        this.dom = new JSDOM(this.content)
+    init() {
+        this.dom = new JSDOM(this.file.content)
         const { document } = this.dom.window
         this.document = document
         return this
     }
 
-    fragment(frag: string){
+    fragment(frag: string): DocumentFragment {
         return JSDOM.fragment(frag)
+    }
+
+    toHtml(): string {
+        return this.dom.serialize()
     }
 }

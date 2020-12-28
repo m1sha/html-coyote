@@ -1,24 +1,11 @@
-import jsdom  from "jsdom"
-const { JSDOM } = jsdom;
+import {IContentFile} from "./fs-utils"
+import DomProvider from "./dom-provider"
+import { BaseCollection } from "./base-collection"
 
-export class Page {
+export class Page extends DomProvider  {
 
-    name: string
-    content: string
-    dom: jsdom.JSDOM
-    document: Document
-
-    constructor(name: string, content: string){
-        this.name = name
-        this.content = content
-        this.dom = new JSDOM('')
-        this.document = this.dom.window.document
-    }
-
-    init(){
-        this.dom = new JSDOM(this.content)
-        const { document } =  this.dom.window
-        this.document = document
+    constructor(file: IContentFile){
+        super(file)
     }
 
     get templates(){
@@ -54,29 +41,13 @@ export class Page {
 
 }
 
-export class PageCollection{
-    items: Page[]
-    length: number
+export class PageCollection extends BaseCollection<Page>{
 
-    constructor(files){
-        this.items = []
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            this.items.push(new Page(file.name, file.content))
-        }
-        this.length = this.items.length
+    constructor(files: IContentFile[]){
+        super(files)
     }
 
-    [Symbol.iterator](){
-        let index = 0;
-        return {
-          next: () => {
-            if (index < this.items.length) {
-              return {value: this.items[index++], done: false}
-            } else {
-              return {done: true}
-            }
-          }
-        }
+    createItem(file: IContentFile): Page {
+        return new Page(file)
     }
 }

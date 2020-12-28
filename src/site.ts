@@ -1,3 +1,4 @@
+import {ContentFile} from "./fs-utils"
 import fs from "fs"
 import path from "path"
 import { PageCollection } from "./page"
@@ -68,7 +69,7 @@ export class Site{
     }
 }
 
-const loadfiles = (dir: string) => { 
+const loadfiles = (dir: string): ContentFile[] => { 
     var files = ls(dir)
     const result = []
     for (let index = 0; index < files.length; index++) {
@@ -79,7 +80,7 @@ const loadfiles = (dir: string) => {
             if (filename.endsWith(".html")){
                 filename = filename.substring(0, filename.length - 5)
             }
-            result.push(new HtmlFile(filename, fullFilename))
+            result.push(new ContentFile(filename, fullFilename))
         }
         if (if_d(fullFilename)){
             loadfiles(fullFilename)
@@ -106,24 +107,11 @@ const loadfilenames = (items: any[], dir: string, root: string)=>{
     
 }
 
-const rf = (filename: string) => fs.readFileSync(filename,'utf8')
+
 const join = (...paths: string[])=> path.join(...paths)
 const ls = (dir: string) => fs.readdirSync(dir)
 const if_f = (filename: string) => fs.lstatSync(filename).isFile()
 const if_d = (dir: string) =>fs.lstatSync(dir).isDirectory()
 const mkdir = (dir: string) => fs.mkdirSync(dir, { recursive: true })
 const cpy = (src: string, dist: string) => fs.copyFileSync(src, dist)
-export class HtmlFile {
-    name: string
-    fullName: string
-
-    constructor (name: string, fullName: string){
-        this.name = name
-        this.fullName = fullName
-    }
-
-    get content(){
-        return rf(this.fullName)
-    }
-}
 

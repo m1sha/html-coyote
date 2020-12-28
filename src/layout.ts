@@ -1,13 +1,15 @@
+import {IContentFile} from "./fs-utils"
 import DomProvider from "./dom-provider"
 import { Page } from "./page"
 import { PartCollection } from "./part"
+import { BaseCollection } from "./base-collection"
 
 export class Layout extends DomProvider {
 
     _data: object = {} 
 
-    constructor(name: string, content: string){
-        super(name, content)
+    constructor(file: IContentFile){
+        super(file)
     }
 
     data(data: object){
@@ -70,31 +72,27 @@ export class Layout extends DomProvider {
     }
 
     build(){
-        return this.dom.serialize()
+        return this.toHtml()
     }
 
 }
 
-export class LayoutCollection{
-    items: Layout[]
-    length: number
+export class LayoutCollection extends BaseCollection<Layout>{
 
-    constructor(files){
-        this.items = []
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            this.items.push(new Layout(file.name, file.content))
-        }
-        this.length = this.items.length
+    createItem(file: IContentFile): Layout {
+        return new Layout(file)
     }
 
-    getLayout(name){
+    constructor(files: IContentFile[]){
+        super(files)
+    }
+
+    getLayout(name): Layout{
         const result = this.items.filter(p=>p.name === name)[0]
         if (!result) throw new Error(`Layout ${name} wasn't found`) 
         
-        return result // new Layout(result) //As copy
+        return result 
     }
-
 }
 
 

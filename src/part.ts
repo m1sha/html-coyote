@@ -1,13 +1,11 @@
-import { HtmlFile } from "./site"
+import { BaseCollection } from "./base-collection"
 import DomProvider from "./dom-provider"
+import { IContentFile } from "./fs-utils"
 
 export class Part extends DomProvider {
-    name: string
-    //template: string
-    //attrs: string[]
 
-    constructor(name: string, content: string){
-        super(name, content)
+    constructor(file: IContentFile){
+        super(file)
     }
 
     get attrs(): string[] {
@@ -63,30 +61,13 @@ export class Part extends DomProvider {
     }
 }
 
-export class PartCollection {
-    items: Part[]
-    length: number
-
-    constructor(files: HtmlFile[]){
-        this.items = []
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            this.items.push(new Part(file.name, file.content))
-        }
-        this.length = this.items.length
+export class PartCollection extends BaseCollection<Part>{
+    constructor(files: IContentFile[]){
+        super(files)
     }
 
-    [Symbol.iterator](){
-        let index = 0;
-        return {
-          next: () => {
-            if (index < this.items.length) {
-              return {value: this.items[index++], done: false}
-            } else {
-              return {done: true}
-            }
-          }
-        }
+    createItem(file: IContentFile): Part {
+        return new Part(file)
     }
 }
 
