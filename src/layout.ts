@@ -3,24 +3,30 @@ import DomProvider from "./dom-provider"
 import { Page } from "./page"
 import { PartCollection } from "./part"
 import { BaseCollection } from "./base-collection"
+import { Dictionary } from "./base-dictionary"
+import { Content } from "./content"
 
 export class Layout extends DomProvider {
 
-    _data: object = {} 
+    _content: Content
 
     constructor(file: IContentFile){
         super(file)
     }
 
-    data(data: object){
-        this._data = data
+    addContent(content: Content){
+        this._content = content
         return this
     }
 
     applyPage(page: Page){
         const slots = this.document.getElementsByTagName("slot")
+        let counter = 0
         while(slots.length > 0){
             const slot = slots[0]
+            if (slots.length === counter) throw new Error(`Detected infinity loop in page '${page.name}' slot '${slot.name}' `);
+            counter = slots.length
+            
             const frag = page.templates[slot.name]
             slot.replaceWith(this.fragment(frag))
         }
@@ -31,12 +37,17 @@ export class Layout extends DomProvider {
     applyParts(parts: PartCollection){
 
         for(const part of parts){
-            part.init()
+           
            const elems = this.document.getElementsByTagName(part.name)
+           if (!elems.length){
+               continue
+           }
+           part.attach()
+
            const attrs = part.attrs
            while  (elems.length > 0){
             const elem = elems[0]
-            const data = {... this._data}
+            const data = {... this._content.data}
             for(let a = 0; a < attrs.length; a++){
                 const attr = attrs[a]
                 let value = ''
@@ -62,7 +73,6 @@ export class Layout extends DomProvider {
                 const template = templates[i];
                 const partHtml = part.applyTemplate(template, data)
                 elem.replaceWith(this.fragment(partHtml))
-                
             }
 
            }

@@ -10,11 +10,15 @@
     <section class="conainer">
         <nav>
             <ul>
-                <menu-item name="index" href="index.html">Home</menu-item>
+                <template loop="item in menu">
+                    <menu-item name="{{item.name}}" href="{{item.href}}">{{item.text}}</menu-item>
+                </template>
+                <!-- <menu-item name="index" href="index.html">Home</menu-item>
                 <menu-item name="about" href="about.html">About</menu-item>
                 <menu-item name="contacts" href="contacts.html">Contacts</menu-item>
-                <menu-item name="galary" href="galary.html">Galary</menu-item>
+                <menu-item name="galary" href="galary.html">Galary</menu-item> -->
            </ul>
+           <slot name="slosss"></slot>
         </nav>
         <section>
             <slot name="content"></slot>

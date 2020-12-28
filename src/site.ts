@@ -4,6 +4,7 @@ import path from "path"
 import { PageCollection } from "./page"
 import { LayoutCollection } from "./layout"
 import { PartCollection } from "./part"
+import { Content } from "./content"
 
 export class Site{
     path: string
@@ -22,6 +23,10 @@ export class Site{
 
     get layouts(){
         return new LayoutCollection(loadfiles(join(this.path, "layouts")))
+    }
+
+    get content(){
+        return new Content(loadfiles(join(this.path, "content")))
     }
 
     get publishPath(){

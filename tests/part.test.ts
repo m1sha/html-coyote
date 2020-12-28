@@ -16,7 +16,7 @@ const part = new Part(new ContentInMemory("test", `
 </template>
 `))
 
-part.init()
+part.attach()
 
 test("attrs must be 3", () => {
     const attrs = part.attrs

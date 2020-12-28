@@ -1,0 +1,6 @@
+#menu items
+menu:
+    - { name: 'index', href: 'index.html', text: 'Home' }
+    - { name: 'about', href: 'about.html', text: 'About' }
+    - { name: 'contacts', href: 'contacts.html', text: 'Contacts' }
+    - { name: 'galary', href: 'galary.html', text: 'Galary' }
