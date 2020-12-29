@@ -20,3 +20,38 @@ test("utils.preparing", ()=>{
     }
 })
 
+test("utils.parseLoopStatement. Loop = 'item of items'", () => {
+
+    const value = utils.parseLoopStatement("item of items")
+    expect(value).toEqual({
+        item: "item",
+        index: '',
+        items: "items"
+    })
+
+    const value2 = utils.parseLoopStatement("key of   keys")
+    expect(value2).toEqual({
+        item: "key",
+        index: '',
+        items: "keys"
+    })
+
+})
+
+test("utils.parseLoopStatement. Loop = '(item, index) of items'", () => {
+
+    const value = utils.parseLoopStatement("(item, index) of items")
+    expect(value).toEqual({
+        item: "item",
+        index: 'index',
+        items: "items"
+    })
+
+    const value2 = utils.parseLoopStatement("(key, i) of  keys")
+    expect(value2).toEqual({
+        item: "key",
+        index: 'i',
+        items: "keys"
+    })
+
+})

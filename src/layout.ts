@@ -68,12 +68,8 @@ export class Layout extends DomProvider {
                 data[attrName] = value
             }
 
-            const templates = part.getTemplates(data)
-            for (let i = 0; i < templates.length; i++) {
-                const template = templates[i];
-                const partHtml = part.applyTemplate(template, data)
-                elem.replaceWith(this.fragment(partHtml))
-            }
+            part.resolveTemplate(parts.items, data)
+           
 
            }
         }

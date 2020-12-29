@@ -1,4 +1,32 @@
 export default class utils {
+  static parseLoopStatement(value: string) {
+      if (!value){
+        throw new Error(`Empty loop statement`)
+      }
+      
+      if (value.indexOf(' of ') < 0 ){
+        throw new Error(`loop statement must contain keyword 'of'`)
+      }
+
+      const params = value.split(" ").filter(p=>p)
+      if (params.length === 3){
+         return {
+             item: params[0],
+             index: '',
+             items: params[2]
+         }
+      }
+
+      if (params.length === 4){
+        return {
+            item: params[0].replace("(","").replace(",",""),
+            index: params[1].replace(")",""),
+            items: params[3]
+        }
+      }
+     
+      throw new Error(`Error parameters count`)
+  }
     
   static preparing(value: string, objName: string): string{
     if (!value) return value

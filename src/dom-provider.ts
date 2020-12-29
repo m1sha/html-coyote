@@ -64,6 +64,18 @@ export default class DomProvider extends TemplateProvider {
                     template.replaceWith(this.fragment(""))
                 }
             }
+
+            if (info.hasLoop){
+                const loop = info._loop(data)
+                const items = data[loop.items]
+                const frags = []
+                for (let i = 0; i < items.length; i++) {
+                    data[loop.item] = items[i];
+                    const html = this.applyTemplate(template.innerHTML, data)
+                    frags.push(html)
+                }
+                template.replaceWith(this.fragment(frags.join("\n")))
+            }
             
         }
         return this
@@ -84,12 +96,14 @@ function getInfo(template: HTMLTemplateElement){
     const hasElse = !!_else
 
     const _loop = template.attributes.getNamedItem("loop")
+    const hasLoop = !!_loop
 
     return {
         hasIf,
         hasElse,
+        hasLoop,
         _loop: function(data: unknown){
-
+           return utils.parseLoopStatement(_loop.nodeValue)
         },
 
         _if : function(data: unknown){
