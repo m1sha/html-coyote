@@ -52,6 +52,7 @@ export default class DomProvider extends TemplateProvider {
                 else{
                     template.replaceWith(this.fragment(""))
                 }
+
             }
 
             if (info.hasElse){
@@ -75,6 +76,11 @@ export default class DomProvider extends TemplateProvider {
                     frags.push(html)
                 }
                 template.replaceWith(this.fragment(frags.join("\n")))
+            }
+
+            if (info.empty){
+                const html = this.applyTemplate(template.innerHTML, data)
+                template.replaceWith(this.fragment(html))
             }
             
         }
@@ -110,7 +116,9 @@ function getInfo(template: HTMLTemplateElement){
             return eval(ifvalue)
         },
         
-        _slot : slot ? slot.nodeValue: null
+        _slot : slot ? slot.nodeValue: null,
+
+        empty: !hasIf && !hasElse && !hasLoop
     }
 }
 

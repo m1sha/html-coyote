@@ -1,7 +1,8 @@
 import { ContentInMemory } from "../src/fs-utils"
 import { Part } from "../src/part"
 
-const part = new Part(new ContentInMemory("test", `
+test("attrs must be 3", () => {
+    const part = new Part(new ContentInMemory("test", `
 <!--#
 .name
 .href
@@ -16,9 +17,22 @@ const part = new Part(new ContentInMemory("test", `
 </template>
 `))
 
-part.attach()
-
-test("attrs must be 3", () => {
+    part.attach()
     const attrs = part.attrs
-    expect(attrs.length).toBe(3)
+    expect(attrs).toEqual([".name", ".href", "@content"])
+})
+
+test("part attrs", ()=>{
+    const part = new Part(new ContentInMemory("test", `
+    <!--#
+    .attr
+    -->
+    <template>
+        <p>{{attr}}</p>
+    </template>
+    `))
+    
+    part.attach()
+    const attrs = part.attrs
+    expect(attrs).toEqual([".attr"])
 })

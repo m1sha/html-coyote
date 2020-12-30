@@ -45,10 +45,14 @@ export class Layout extends DomProvider {
            part.attach()
 
            const attrs = part.attrs
-           while  (elems.length > 0){
+           let index = 0
+           while  (elems.length > 0){ //TODO Rewrite all same places
+            if (elems.length === index) throw new Error("Infinity loop")
+            index = elems.length
+
             const elem = elems[0]
             const data = {... this._content.data}
-            for(let a = 0; a < attrs.length; a++){
+            for(let a = 0; a < attrs.length; a++){ 
                 const attr = attrs[a]
                 let value = ''
                 
@@ -69,7 +73,9 @@ export class Layout extends DomProvider {
             }
 
             part.resolveTemplate(parts.items, data)
-           
+            const html = part.toHtml()
+            elem.replaceWith(this.fragment(html))
+            part.attach()
 
            }
         }

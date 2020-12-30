@@ -1,5 +1,5 @@
 export default class utils {
-  static parseLoopStatement(value: string) {
+  static parseLoopStatement(value: string) { //TODO Rewrite method 'parseLoopStatement'
       if (!value){
         throw new Error(`Empty loop statement`)
       }

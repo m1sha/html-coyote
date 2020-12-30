@@ -17,7 +17,7 @@ export class Part extends DomProvider {
                 node.nodeValue
                     .substring(1)
                     .split("\n")
-                    .filter(p=>p)
+                    .filter(p=>p && p.trim())
                     .map(p => {
                         const v = p.replace("\r", "").trim()
                         if (v.indexOf(" ") > -1 && (!v.startsWith(".") || !v.startsWith("@"))){
