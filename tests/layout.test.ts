@@ -3,7 +3,8 @@ import { Content } from "../src/content"
 import { ContentInMemory, IContentFile } from "../src/fs-utils"
 import { Layout } from "../src/layout"
 import { Part, PartCollection } from "../src/part"
-
+import { TemplateResolver } from "../src/template-resolver"
+const resolver = new TemplateResolver()
 const content = new Content([new ContentInMemory("menu.yml", `
 menu:
     - item 1
@@ -26,10 +27,7 @@ test("layout + template content", ()=>{
     </html>
     `) 
     
-    layout.attach()
-    layout.addContent(content)
-    layout.resolveTemplate()
-    const html = layout.toHtml()
+    const html = resolver.resolve(layout, null, null, content)
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
@@ -50,10 +48,8 @@ test("layout + page", () => {
     </template>
     `)
 
-    layout.attach()
-    page.attach()
-    layout.resolvePage(page)
-    const html = layout.toHtml()
+    
+    const html = resolver.resolve(layout, page, null, null)
     expect(html).toContain("<p>Page Content</p>")
 })
 
@@ -76,10 +72,7 @@ test("layout + part", ()=>{
     `)
 
     layout.attach()
-    layout.addContent(new Content([]))
-    layout.addParts(createParts([ part ]))
-    layout.resolveParts()
-    const html = layout.toHtml()
+    const html = resolver.resolve(layout, null, createParts([ part ]), new Content([]))
     expect(html).toContain("<p>value</p>")
 
 })
@@ -104,14 +97,8 @@ test("layout + content data + part", ()=>{
     <p>{{attr}}</p>
     </template>
     `)
-
-    layout.attach()
-    layout.addContent(content)
-    layout.resolveTemplate()
-
-    layout.addParts(createParts([ part ]))
-    layout.resolveParts()
-    const html = layout.toHtml()
+   
+    const html = resolver.resolve(layout, null, createParts([ part ]), content)
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
