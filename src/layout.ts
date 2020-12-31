@@ -1,31 +1,22 @@
 import {IContentFile} from "./fs-utils"
 import DomProvider from "./dom-provider"
 import { Page } from "./page"
-import { PartCollection } from "./part"
 import { BaseCollection } from "./base-collection"
-import { Dictionary } from "./base-dictionary"
-import { Content } from "./content"
 
 export class Layout extends DomProvider {
-
-    _content: Content
 
     constructor(file: IContentFile){
         super(file)
     }
 
-    addContent(content: Content){
-        this._content = content
-        return this
-    }
-
-    applyPage(page: Page){
+    resolvePage(page: Page){
         const slots = this.document.getElementsByTagName("slot")
-        let counter = 0
+        let count = 0
         while(slots.length > 0){
             const slot = slots[0]
-            if (slots.length === counter) throw new Error(`Detected infinity loop in page '${page.name}' slot '${slot.name}' `);
-            counter = slots.length
+
+            if (slots.length === count) throw new Error(`Detected infinity loop in page '${page.name}' slot '${slot.name}' `);
+            count = slots.length
             
             const frag = page.templates[slot.name]
             slot.replaceWith(this.fragment(frag))
@@ -34,15 +25,17 @@ export class Layout extends DomProvider {
         return this
     }
 
-    applyParts(parts: PartCollection){
+    resolveParts(){
 
-        for(const part of parts){
+         for(const part of this.parts){
            
-           const elems = this.document.getElementsByTagName(part.name)
-           if (!elems.length){
-               continue
-           }
-           part.attach()
+            const elems = this.document.getElementsByTagName(part.name)
+            if (!elems.length){
+                continue
+            }
+            part.attach()
+            part.addContent(this.content)
+            part.addParts(this.parts)
 
            const attrs = part.attrs
            let index = 0
@@ -51,7 +44,7 @@ export class Layout extends DomProvider {
             index = elems.length
 
             const elem = elems[0]
-            const data = {... this._content.data}
+            //const data = {... this.content.data}
             for(let a = 0; a < attrs.length; a++){ 
                 const attr = attrs[a]
                 let value = ''
@@ -69,10 +62,10 @@ export class Layout extends DomProvider {
                 }
 
                 const attrName = attr.substring(1)
-                data[attrName] = value
+                this.content.add(attrName, value)
             }
 
-            part.resolveTemplate(parts.items, data)
+            part.resolveTemplate()
             const html = part.toHtml()
             elem.replaceWith(this.fragment(html))
             part.attach()
@@ -80,13 +73,8 @@ export class Layout extends DomProvider {
            }
         }
         
-        return this
+         return this
     }
-
-    build(){
-        return this.toHtml()
-    }
-
 }
 
 export class LayoutCollection extends BaseCollection<Layout>{

@@ -1,38 +1,46 @@
 import { ContentInMemory } from "../src/fs-utils"
 import { Part } from "../src/part"
 
-test("attrs must be 3", () => {
-    const part = new Part(new ContentInMemory("test", `
-<!--#
-.name
-.href
-@content
--->
-
-<template if="__pageName === name">
-    <li>{{content}}</li>
-</template>
-<template else>
-    <li><a href="{{href}}">{{content}}</a></li>
-</template>
-`))
+test("attrs should be 3", () => {
+    const part = createPart(`
+        <!--#
+        .name
+        .href
+        @content
+        -->
+    `)
 
     part.attach()
     const attrs = part.attrs
     expect(attrs).toEqual([".name", ".href", "@content"])
 })
 
-test("part attrs", ()=>{
-    const part = new Part(new ContentInMemory("test", `
-    <!--#
-    .attr
-    -->
-    <template>
-        <p>{{attr}}</p>
-    </template>
-    `))
+test("attrs should be 1", ()=>{
+    const part = createPart(`
+        <!--#
+        .attr
+        -->
+    `)
     
     part.attach()
     const attrs = part.attrs
     expect(attrs).toEqual([".attr"])
 })
+
+test("attrs should be @content only", ()=>{
+    const part = createPart(`
+        <!--#
+    
+        @content
+    
+        -->
+    `)
+    
+    part.attach()
+    const attrs = part.attrs
+    expect(attrs).toEqual(["@content"])
+})
+
+function createPart(content: string): Part{
+    return new Part(new ContentInMemory("test", content))
+}

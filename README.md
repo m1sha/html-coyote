@@ -2,6 +2,8 @@
 
 Simple Static is a HTML static site generator
 
+## Basic usage
+
 layout.html
 ```html
 <html>

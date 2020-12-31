@@ -28,7 +28,7 @@ test("layout + template content", ()=>{
     
     layout.attach()
     layout.addContent(content)
-    layout.resolveTemplate([], content.data)
+    layout.resolveTemplate()
     const html = layout.toHtml()
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
@@ -46,13 +46,13 @@ test("layout + page", () => {
 
     const page = createPage(`
     <template slot="place-holder">
-    <p>Page Content</p>
+        <p>Page Content</p>
     </template>
     `)
 
     layout.attach()
     page.attach()
-    layout.applyPage(page)
+    layout.resolvePage(page)
     const html = layout.toHtml()
     expect(html).toContain("<p>Page Content</p>")
 })
@@ -77,7 +77,8 @@ test("layout + part", ()=>{
 
     layout.attach()
     layout.addContent(new Content([]))
-    layout.applyParts(createParts([ part ]))
+    layout.addParts(createParts([ part ]))
+    layout.resolveParts()
     const html = layout.toHtml()
     expect(html).toContain("<p>value</p>")
 
@@ -106,9 +107,10 @@ test("layout + content data + part", ()=>{
 
     layout.attach()
     layout.addContent(content)
-    layout.resolveTemplate([], content.data)
+    layout.resolveTemplate()
 
-    layout.applyParts(createParts([ part ]))
+    layout.addParts(createParts([ part ]))
+    layout.resolveParts()
     const html = layout.toHtml()
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")

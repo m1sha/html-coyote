@@ -15,16 +15,18 @@ for (const page of pages) {
     page.attach()
     const layout = layouts.getLayout(page.layoutName)
     content.add("_pageName", page.name)
+    
     const html = layout
       .attach()
       .addContent(content)
-      .resolveTemplate(parts.items, content.data)
-      .applyPage(page)
-      .applyParts(parts)
-      .build()
+      .addParts(parts)
+      .resolvePage(page)
+      .resolveTemplate()
+      .resolveParts()
+      .toHtml()
 
-      site.publishPage(page.name, html)
-      cli.succ(`page: ${page.name}`)
+    site.publishPage(page.name, html)
+    cli.succ(`page: ${page.name}`)
 
   } catch(e){
     cli.err(`page: ${page.name}. ${e.message}`)
