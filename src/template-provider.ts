@@ -69,7 +69,8 @@ export class TemplateInfo {
         if (!this.hasIf) throw new Error("Template hasn't contain 'if' statement")
 
         const value = utils.preparing(this.ifAttr.nodeValue, "data")
-        return eval(value)
+        const res = eval(value)
+        return !!res
     }
 
     getLoopInfo(data: unknown){

@@ -26,6 +26,7 @@ export class Part extends DomProvider {
                         return v
                     })
                     .forEach(p=> result.push(p))
+                node.remove()
             }
         }
         return result
