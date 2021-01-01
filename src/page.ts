@@ -8,7 +8,7 @@ export class Page extends DomProvider  {
         super(file)
     }
 
-    get templates(){
+    get templates(): unknown{
         const templates = this.document.getElementsByTagName("template")
         const r = {}
         for(let i=0; i < templates.length; i++){
@@ -23,7 +23,7 @@ export class Page extends DomProvider  {
         return r
     }
 
-    get layoutName(){
+    get layoutName(): string{
         const nodes = this.document.childNodes
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];

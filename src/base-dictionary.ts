@@ -10,7 +10,7 @@ export class  Dictionary<TValue>  {
         this.items[key] = value
     }
 
-    assign(obj: any){
+    assign(obj: unknown): void{
         Object.assign(this.items, obj)
     }
 

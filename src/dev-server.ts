@@ -21,12 +21,11 @@ function watchHandler (event, pth: string){
           console.log(dirName)
           console.log(distFileName)
         }
-        
     }
 }
 
 
-var params = {
+const params = {
 	port: 7001, // Set the server port. Defaults to 8080.
 	root: rootdir, // Set root directory that's being served. Defaults to cwd.
 	open: true, // When false, it won't load your browser by default.
@@ -37,7 +36,7 @@ var params = {
 };
 
 export default class DevServer {
-    start(){
+    start(): void{
         chokidar.watch(assetsdir).on("all", (event, pth)=> {
             console.log(pth)
             watchHandler(event, pth)

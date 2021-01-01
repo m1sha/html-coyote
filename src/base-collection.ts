@@ -16,9 +16,9 @@ export abstract class BaseCollection<T> {
 
     abstract createItem(file: ContentFile): T
 
-    [Symbol.iterator](){
+    [Symbol.iterator](): IterableIterator<T>{
         let index = 0;
-        return {
+        return  {
           next: () => {
             if (index < this.items.length) {
               return {value: this.items[index++], done: false}
@@ -26,6 +26,6 @@ export abstract class BaseCollection<T> {
               return {done: true}
             }
           }
-        }
+        } as IterableIterator<T>
     }    
 }

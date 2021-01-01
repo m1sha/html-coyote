@@ -18,7 +18,7 @@ export class LayoutCollection extends BaseCollection<Layout>{
         super(files)
     }
 
-    getLayout(name): Layout{
+    getLayout(name: string): Layout{
         const result = this.items.filter(p=>p.name === name)[0]
         if (!result) throw new Error(`Layout ${name} wasn't found`) 
         

@@ -1,12 +1,12 @@
 import * as yaml from 'js-yaml'
-import { Dictionary } from './base-dictionary';
+import { Dictionary, KeyValuePairs } from './base-dictionary';
 import { IContentFile } from './fs-utils';
 
 export class Content {
-    protected dictionary: Dictionary<any>
+    protected dictionary: Dictionary<unknown>
 
     constructor(files: IContentFile[]) {
-        this.dictionary = new Dictionary<any>()
+        this.dictionary = new Dictionary<unknown>()
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             if (file.name.endsWith('.yml')){
@@ -15,15 +15,15 @@ export class Content {
         }
     }
 
-    add(key: string, value: unknown){
+    add(key: string, value: unknown): void{
         this.dictionary.add(key, value)
     }
 
-    get data(){
+    get data(): KeyValuePairs<unknown>{
         return this.dictionary.items
     }
 }
 
-function toJson(content: string): any{
+function toJson(content: string): unknown{
    return yaml.safeLoad(content)
 }

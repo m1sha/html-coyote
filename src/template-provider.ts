@@ -2,8 +2,8 @@ import * as _ from "lodash"
 import utils from "./utils"
 
 export class TemplateProvider{
-
-    applyTemplateData(html, data){
+    // eslint-disable-next-line
+    applyTemplateData(html: string, data): string{
         _.templateSettings.interpolate = /{{([\s\S]+?)}}/g
         const comp =  _.template(html)
         return comp(data)
@@ -49,7 +49,7 @@ export class TemplateInfo {
             this.slotAttr = slotAttr
     }
 
-    validate(){
+    validate(): TemplateInfo{
         if (this.hasIf && (this.hasElif || this.hasElse)){
             throw new Error("Template has wrong statement 'if-elif-else'")
         }
@@ -64,8 +64,9 @@ export class TemplateInfo {
 
         return this
     }
-
-    getIfResult(data: unknown): Boolean{
+    
+    // eslint-disable-next-line
+    getIfResult(data: unknown): boolean{
         if (!this.hasIf) throw new Error("Template hasn't contain 'if' statement")
 
         const value = utils.preparing(this.ifAttr.nodeValue, "data")
@@ -73,13 +74,14 @@ export class TemplateInfo {
         return !!res
     }
 
+    // eslint-disable-next-line
     getLoopInfo(data: unknown){
         if (!this.hasLoop) throw new Error("Template hasn't contain 'lopp' statement")
         
         return utils.parseLoopStatement(this.loopAttr.nodeValue)
     }
 
-    get empty() {
+    get empty(): boolean {
         return !this.hasIf && !this.hasElif && !this.hasElse && !this.hasLoop && !this.hasSlot
     }
 }

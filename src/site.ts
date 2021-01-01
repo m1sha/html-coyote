@@ -13,34 +13,34 @@ export class Site{
         this.path = path.resolve(__dirname, basepath)
     }
 
-    get pages(){
+    get pages(): PageCollection{
         return new PageCollection(loadfiles(join(this.path, "pages")))
     }
 
-    get parts(){
+    get parts(): PartCollection{
         return new PartCollection(loadfiles(join(this.path, "parts")))
     }
 
-    get layouts(){
+    get layouts(): LayoutCollection{
         return new LayoutCollection(loadfiles(join(this.path, "layouts")))
     }
 
-    get content(){
+    get content(): Content{
         return new Content(loadfiles(join(this.path, "content")))
     }
 
-    get publishPath(){
+    get publishPath(): string{
         return path.resolve(this.path, "../publish")
     }
 
-    publishPage(name: string, html: string){
+    publishPage(name: string, html: string): void{
         const publishPath = this.publishPath
         mkdir(publishPath)
         const filename = join(publishPath, name + ".html")
         fs.writeFileSync(filename, html)
     }
 
-    publishAssets(action: Function){
+    publishAssets(action: CallableFunction): void{
         const publishPath = this.publishPath
         const asstesPath = join(this.path, "assets")
         const files = []
@@ -75,7 +75,7 @@ export class Site{
 }
 
 const loadfiles = (dir: string): ContentFile[] => { 
-    var files = ls(dir)
+    const files = ls(dir)
     const result = []
     for (let index = 0; index < files.length; index++) {
         let filename = files[index]
@@ -95,8 +95,8 @@ const loadfiles = (dir: string): ContentFile[] => {
     return result
 }
 
-const loadfilenames = (items: any[], dir: string, root: string)=>{
-    var files = ls(dir)
+const loadfilenames = (items: unknown[], dir: string, root: string)=>{
+    const files = ls(dir)
    
     for (let index = 0; index < files.length; index++) {
         const filename = files[index]

@@ -19,11 +19,10 @@ export default class DomProvider extends TemplateProvider {
         this.document = this.dom.window.document
     }
 
-    attach() {
+    attach(): void {
         this.dom = new JSDOM(this.file.content)
         const { document } = this.dom.window
         this.document = document
-        return this
     }
 
     fragment(frag: string): DocumentFragment {

@@ -1,5 +1,5 @@
 export default class utils {
-  static parseLoopStatement(value: string) { //TODO Rewrite method 'parseLoopStatement'
+  static parseLoopStatement(value: string): ILoopInfo { //TODO Rewrite method 'parseLoopStatement'
       if (!value){
         throw new Error(`Empty loop statement`)
       }
@@ -76,4 +76,10 @@ export default class utils {
     
     return result
   }
+}
+
+interface ILoopInfo{
+  item: string
+  index: string
+  items: string
 }

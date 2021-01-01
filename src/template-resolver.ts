@@ -21,7 +21,7 @@ export class TemplateResolver {
         return layout.toHtml()
     }
 
-    resolvePage(layout: Layout, page: Page){
+    resolvePage(layout: Layout, page: Page): void{
         page.attach()
 
         const slots = layout.document.getElementsByTagName("slot")
@@ -37,7 +37,7 @@ export class TemplateResolver {
         }
     }
 
-    resolveTemplate(element: DomProvider, content: Content){
+    resolveTemplate(element: DomProvider, content: Content): void{
         const data = content.data
         const templates = element.document.getElementsByTagName("template")
         let ifResult = null
@@ -55,9 +55,9 @@ export class TemplateResolver {
                 _else = false
             }
 
-            if (info.hasElif){
+            // if (info.hasElif){
 
-            }
+            // }
 
             if (info.hasElse){
                 if (_else) throw new Error("'Else' more one time")
@@ -77,7 +77,7 @@ export class TemplateResolver {
         }
     }
 
-    resolveParts(element: DomProvider, parts: PartCollection, content: Content){
+    resolveParts(element: DomProvider, parts: PartCollection, content: Content): void{
         for(const part of parts){
           
            const elems = element.document.getElementsByTagName(part.name)
@@ -117,7 +117,7 @@ export class TemplateResolver {
         template.replaceWith(root.fragment(""))
     }
 
-    private applyElse(root: DomProvider, ifResult: object, template: HTMLTemplateElement, data: unknown){
+    private applyElse(root: DomProvider, ifResult: unknown, template: HTMLTemplateElement, data: unknown){
         if (ifResult === null) throw new Error(`Part '${root.name}' not found if statement`)
         if (!ifResult){
            const html = root.applyTemplateData(template.innerHTML, data)
