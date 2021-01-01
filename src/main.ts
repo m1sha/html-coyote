@@ -2,6 +2,7 @@ import _ from './cli'
 import __ from './strings'
 import { Site } from "./site"
 import { TemplateResolver } from './template-resolver'
+import DevServer from './dev-server'
 
 const site = new Site("../site")
 const layouts = site.layouts
@@ -36,3 +37,6 @@ site.publishAssets((src, dist, err)=>{
 
 })
 _.info(__.EndSiteAssembly)
+
+const server = new DevServer()
+server.start()
