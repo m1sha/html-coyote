@@ -11,10 +11,12 @@
         <nav>
             <ul>
                 <template loop="item of menu">
-                    <menu-item name="{{item.name}}" href="{{item.href}}">{{item.text}}</menu-item>
+                    <menu-item name="{{item.name}}" href="{{item.href}}">
+                        {{item.text}}
+                        <slot name="submenu"></slot>
+                    </menu-item>
                 </template>
            </ul>
-           <slot name="slosss"></slot>
         </nav>
         <section>
             <slot name="content"></slot>
