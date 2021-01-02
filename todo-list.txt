@@ -1,1 +1,1 @@
-BUG #1 header tags out of header
+KNOWNBUG #1 header tags out of header. If those below than <slot> tag
