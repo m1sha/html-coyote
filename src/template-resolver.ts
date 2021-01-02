@@ -78,15 +78,21 @@ export class TemplateResolver {
     }
 
     resolveParts(element: DomProvider, parts: PartCollection, content: Content): void{
-        for(const part of parts){
+        let go = true
+        while(go){
+            for(const part of parts){
           
-           const elems = element.document.getElementsByTagName(part.name)
-           if (!elems.length){
-               continue
-           }
-
-           this.resolvePart(elems, element, part, content)
-       }
+                const elems = element.document.getElementsByTagName(part.name)
+                if (!elems.length){
+                    go = false
+                    continue
+                }
+     
+                this.resolvePart(elems, element, part, content)
+                go = true
+            }
+        }
+        
     }
 
     private resolvePart(elems: HTMLCollectionOf<Element>, root: DomProvider, part: Part, content: Content){
