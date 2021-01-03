@@ -4,12 +4,14 @@ import DomProvider from "./dom-provider";
 import { Layout } from "./layout";
 import { Page } from "./page";
 import { Part, PartCollection } from "./part";
+import { ifdef, ifeq, ifnull } from './err';
 
 export class TemplateResolver {
 
     resolve(layout: Layout, page: Page, parts: PartCollection, content: Content): string {
-        if (!layout) throw new Error(__.LayoutShouldBeDefined)
+        ifnull(layout, __.LayoutShouldBeDefined)
         layout.attach()
+
         let go = true
         while(page ? this.resolvePage(layout, page): go){
       
@@ -21,7 +23,7 @@ export class TemplateResolver {
 
             if (parts)
             {
-                if (!content) throw new Error(__.CannotResolvePartsIfContentUndefined)
+                ifnull(content, __.CannotResolvePartsIfContentUndefined)
                 this.resolveParts(layout, parts, content)
             }
         }
@@ -30,6 +32,8 @@ export class TemplateResolver {
     }
 
     resolvePage(layout: Layout, page: Page): boolean{
+        ifnull(layout, __.LayoutShouldBeDefined)
+        ifnull(page, __.PageShouldBeDefined)
         page.attach()
 
         const slots = layout.document.getElementsByTagName("slot")
@@ -40,8 +44,7 @@ export class TemplateResolver {
         let count = 0
         while(slots.length > 0){
             const slot = slots[0]
-
-            if (slots.length === count) throw new Error(__.infinityLoopDetected(slot.name))
+            ifeq(slots.length, count, __.infinityLoopDetected(slot.name))
             count = slots.length
             
             const frag = page.templates[slot.name]
@@ -57,7 +60,7 @@ export class TemplateResolver {
         let _else = false
         let count = 0
         while(templates.length > 0){
-            if (templates.length === count) throw new Error(__.infinityLoopDetected(element.name))
+            ifeq(templates.length, count, __.infinityLoopDetected(element.name))
             count = templates.length
             const template = templates[0]
             const info = element.getTemplateInfo(template)
@@ -73,7 +76,7 @@ export class TemplateResolver {
             // }
 
             if (info.hasElse){
-                if (_else) throw new Error("'Else' more one time")
+                ifdef(_else, "'Else' more one time")
                 this.applyElse(element, ifResult, template, data)
                 _else = true
             }
@@ -111,7 +114,7 @@ export class TemplateResolver {
     private resolvePart(elems: HTMLCollectionOf<Element>, root: DomProvider, part: Part, content: Content){
         let index = 0
         while  (elems.length > 0) { 
-            if (elems.length === index) throw new Error(__.infinityLoopDetected(root.name))
+            ifeq(elems.length, index, __.infinityLoopDetected(root.name))
             index = elems.length
 
             part.attach()
@@ -137,7 +140,7 @@ export class TemplateResolver {
     }
 
     private applyElse(root: DomProvider, ifResult: unknown, template: HTMLTemplateElement, data: unknown){
-        if (ifResult === null) throw new Error(`Part '${root.name}' not found if statement`)
+        ifeq(ifResult, null, `Part '${root.name}' not found if statement`)
         if (!ifResult){
            const html = root.applyTemplateData(template.innerHTML, data)
            template.replaceWith(root.fragment(html))
@@ -170,8 +173,7 @@ export class TemplateResolver {
             if (attr.startsWith(".")) {
                 const a = attr.substring(1)
                 const attrValue = elem.attributes[a]
-                if (!attrValue) throw new Error(`Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
-
+                ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
                 value =  attrValue.nodeValue
             }
 

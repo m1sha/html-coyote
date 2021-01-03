@@ -1,5 +1,6 @@
 import { BaseCollection } from "./base-collection"
 import DomProvider from "./dom-provider"
+import { iftrue } from "./err"
 import { IContentFile } from "./fs-utils"
 
 export class Part extends DomProvider {
@@ -20,9 +21,7 @@ export class Part extends DomProvider {
                     .filter(p=>p && p.trim() && p.replace("\t", "").trim())
                     .map(p => {
                         const v = p.replace("\r", "").trim()
-                        if (v.indexOf(" ") > -1 && (!v.startsWith(".") || !v.startsWith("@"))){
-                            throw new Error(`Part '${this.name}' can't parse attr '${v}'`)
-                        }
+                        iftrue (v.indexOf(" ") > -1 && (!v.startsWith(".") || !v.startsWith("@")), `Part '${this.name}' can't parse attr '${v}'`)
                         return v
                     })
                     .forEach(p=> result.push(p))

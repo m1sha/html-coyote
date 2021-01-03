@@ -1,6 +1,7 @@
 import {IContentFile} from "./fs-utils"
 import DomProvider from "./dom-provider"
 import { BaseCollection } from "./base-collection"
+import { ifnull } from "./err"
 
 export class Layout extends DomProvider {
     constructor(file: IContentFile){
@@ -20,8 +21,7 @@ export class LayoutCollection extends BaseCollection<Layout>{
 
     getLayout(name: string): Layout{
         const result = this.items.filter(p=>p.name === name)[0]
-        if (!result) throw new Error(`Layout ${name} wasn't found`) 
-        
+        ifnull(result, `Layout ${name} wasn't found`) 
         return result 
     }
 }

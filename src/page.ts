@@ -1,6 +1,7 @@
 import {IContentFile} from "./fs-utils"
 import DomProvider from "./dom-provider"
 import { BaseCollection } from "./base-collection"
+import { iftrue } from "./err"
 
 export class Page extends DomProvider  {
 
@@ -14,9 +15,7 @@ export class Page extends DomProvider  {
         for(let i=0; i < templates.length; i++){
             const template = templates[i]
             const slot = template.attributes.getNamedItem("slot")
-            if (!slot || !slot.nodeValue) {
-                throw new Error(`tag template hasn't contain required attribute slot`)
-            }
+            iftrue(!slot || !slot.nodeValue, `tag template hasn't contain required attribute slot`) 
             
             r[slot.nodeValue] = template.innerHTML
         }

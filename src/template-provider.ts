@@ -1,4 +1,5 @@
-import * as _ from "lodash"
+import _ from "lodash"
+import { iffalse, iftrue } from "./err"
 import utils from "./utils"
 
 export class TemplateProvider{
@@ -50,24 +51,16 @@ export class TemplateInfo {
     }
 
     validate(): TemplateInfo{
-        if (this.hasIf && (this.hasElif || this.hasElse)){
-            throw new Error("Template has wrong statement 'if-elif-else'")
-        }
-
-        if (this.hasIf && (!this.ifAttr.nodeValue || !this.ifAttr.nodeValue.trim())){
-            throw new Error("Template hasn't contain 'if' condition")
-        }
-
-        if (this.hasLoop && (!this.loopAttr.nodeValue || !this.loopAttr.nodeValue.trim())){
-            throw new Error("Template hasn't contain 'loop' condition")
-        }
+        iftrue(this.hasIf && (this.hasElif || this.hasElse), "Template has wrong statement 'if-elif-else'")
+        iftrue(this.hasIf && (!this.ifAttr.nodeValue || !this.ifAttr.nodeValue.trim()), "Template hasn't contain 'if' condition")
+        iftrue(this.hasLoop && (!this.loopAttr.nodeValue || !this.loopAttr.nodeValue.trim()), "Template hasn't contain 'loop' condition")
 
         return this
     }
     
     // eslint-disable-next-line
     getIfResult(data: unknown): boolean{
-        if (!this.hasIf) throw new Error("Template hasn't contain 'if' statement")
+        iffalse(this.hasIf, "Template hasn't contain 'if' statement")
 
         const value = utils.preparing(this.ifAttr.nodeValue, "data")
         const res = eval(value)
@@ -76,7 +69,7 @@ export class TemplateInfo {
 
     // eslint-disable-next-line
     getLoopInfo(data: unknown){
-        if (!this.hasLoop) throw new Error("Template hasn't contain 'lopp' statement")
+        iffalse(this.hasLoop, "Template hasn't contain 'lopp' statement")
         
         return utils.parseLoopStatement(this.loopAttr.nodeValue)
     }
