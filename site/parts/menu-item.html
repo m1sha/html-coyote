@@ -5,8 +5,13 @@
 -->
 
 <template if="__pageName === name">
-    <li>{{content}}</li>
+    <li>
+        {{content}}
+        <slot name="submenu"></slot>
+    </li>
 </template>
 <template else>
-    <li><a href="{{href}}">{{content}}</a></li>
+    <li>
+        <a href="{{href}}">{{content}}</a>
+    </li>
 </template>

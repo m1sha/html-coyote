@@ -8,23 +8,35 @@ import { Part, PartCollection } from "./part";
 export class TemplateResolver {
 
     resolve(layout: Layout, page: Page, parts: PartCollection, content: Content): string {
+        if (!layout) throw new Error(__.LayoutShouldBeDefined)
         layout.attach()
-        if (page)
-            this.resolvePage(layout, page)
+        let go = true
+        while(page ? this.resolvePage(layout, page): go){
+      
+            go = false
         
-        if (content)
-            this.resolveTemplate(layout, content)
-        
-        if (parts)
-            this.resolveParts(layout, parts, content)
+            if (content){
+                this.resolveTemplate(layout, content)
+            }
 
+            if (parts)
+            {
+                if (!content) throw new Error(__.CannotResolvePartsIfContentUndefined)
+                this.resolveParts(layout, parts, content)
+            }
+        }
+        
         return layout.toHtml()
     }
 
-    resolvePage(layout: Layout, page: Page): void{
+    resolvePage(layout: Layout, page: Page): boolean{
         page.attach()
 
         const slots = layout.document.getElementsByTagName("slot")
+        if (slots.length == 0){
+            return false
+        }
+
         let count = 0
         while(slots.length > 0){
             const slot = slots[0]
@@ -35,6 +47,7 @@ export class TemplateResolver {
             const frag = page.templates[slot.name]
             slot.replaceWith(layout.fragment(frag))
         }
+        return true
     }
 
     resolveTemplate(element: DomProvider, content: Content): void{
