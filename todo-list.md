@@ -17,7 +17,7 @@ layout.html
 custom-component.html
 ```html
 <!--#.items-->
-<template loop="item of item">
+<template loop="item of items">
     <p>{{item.name}}</p>
 </template>
 ```
@@ -38,7 +38,35 @@ content.add("values", [{name: "item1"}, {name: "item2"}, {name: "item3"}])
 
 ```
 
+BUG #3 Template in template
 
+layout.html
+```html
+<html>
+    <body>
+        <custom-component>
+    </body>
+</html>
+```
+
+custom-component.html
+```html
+<template>
+    <ul>
+    <template loop="item of items">
+        <li>{{item.name}}</li>
+    </template>
+    <ul>
+</template>
+```
+
+*.yml
+```yaml
+items: 
+    - { name: 'item1' } 
+    - { name: 'item2' } 
+    - { name: 'item3' }
+```
 
 
 ### KNOWNBUGS 
