@@ -86,6 +86,12 @@ export class TemplateResolver {
                 this.applyLoop(element, loop, template, data)
             }
 
+            if (info.hasMarkdown){
+                ifnull(data.markdown, `Can't found markdown-document`)
+                const html = data.markdown["content"]
+                template.replaceWith(element.fragment(html))
+            }
+
             if (info.empty){
                 const html = element.applyTemplateData(template.innerHTML, data)
                 template.replaceWith(element.fragment(html))

@@ -2,6 +2,8 @@ import { ContentInMemory } from "../src/fs-utils"
 import  DomProvider  from "../src/dom-provider"
 import { Content } from "../src/content"
 import { TemplateResolver } from "../src/template-resolver"
+import { MdDocument } from "../src/md-document"
+import __ from "../src/strings"
 const resolver = new TemplateResolver()
 
 test ("if-else-statement", ()=>{
@@ -61,6 +63,17 @@ test ("loop-statement", ()=>{
     expect(html).toContain("<p>value 1</p>")
     expect(html).toContain("<p>value 2</p>")
     expect(html).toContain("<p>value 3</p>")
+})
+
+test("template markdown", ()=>{
+    const content = createContent()
+    const root = createDom(`<template markdown></template>`)
+    const md = new MdDocument(new ContentInMemory("file.md",`# Hello`))
+    md.open()
+    content.add(__.Markdown, md)
+    root.attach()
+    const html = resolver.resolve(root, null, null, content)
+    expect(html).toContain(`<h1 id="hello">Hello</h1>`)
 })
 
 

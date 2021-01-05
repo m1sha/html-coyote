@@ -17,8 +17,9 @@ export class TemplateProvider{
         const elseAttr = template.attributes.getNamedItem("else")
         const loopAttr = template.attributes.getNamedItem("loop")
         const slotAttr = template.attributes.getNamedItem("slot")
+        const markdownAttr = template.attributes.getNamedItem("markdown")
     
-        return new TemplateInfo(ifAttr, elifAttr, elseAttr, loopAttr, slotAttr).validate()
+        return new TemplateInfo(ifAttr, elifAttr, elseAttr, loopAttr, slotAttr, markdownAttr).validate()
     }
 }
 
@@ -28,26 +29,31 @@ export class TemplateInfo {
     readonly hasElse: boolean
     readonly hasLoop: boolean
     readonly hasSlot: boolean
+    readonly hasMarkdown: boolean
     readonly ifAttr: Attr
     readonly elifAttr: Attr
     readonly loopAttr: Attr
     readonly slotAttr: Attr
+    readonly markdownAttr: Attr
 
     constructor(
         ifAttr: Attr,
         elifAttr: Attr,
         elseAttr: Attr,
         loopAttr: Attr,
-        slotAttr: Attr) {
+        slotAttr: Attr,
+        markdownAttr: Attr) {
             this.hasIf = !!ifAttr
             this.hasElif = !!elifAttr
             this.hasElse = !!elseAttr
             this.hasLoop = !!loopAttr
             this.hasSlot = !!slotAttr
+            this.hasMarkdown = !!markdownAttr
             this.ifAttr = ifAttr
             this.elifAttr = elifAttr
             this.loopAttr = loopAttr
             this.slotAttr = slotAttr
+            this.markdownAttr = markdownAttr
     }
 
     validate(): TemplateInfo{
@@ -75,6 +81,6 @@ export class TemplateInfo {
     }
 
     get empty(): boolean {
-        return !this.hasIf && !this.hasElif && !this.hasElse && !this.hasLoop && !this.hasSlot
+        return !this.hasIf && !this.hasElif && !this.hasElse && !this.hasLoop && !this.hasSlot && !this.hasMarkdown
     }
 }

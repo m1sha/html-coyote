@@ -1,5 +1,6 @@
 export default class strings {
     static readonly PageName: string = "__pageName"
+    static readonly Markdown: string = "markdown"
     static readonly StartSiteAssembly: string = "Start site assembly\n"
     static readonly PublishPages: string = "\nPublish pages"
     static readonly Assets: string = "\nAssets"

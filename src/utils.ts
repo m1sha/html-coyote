@@ -1,3 +1,4 @@
+import * as yaml from 'js-yaml'
 export default class utils {
   static parseLoopStatement(value: string): ILoopInfo { //TODO Rewrite method 'parseLoopStatement'
       if (!value){
@@ -75,6 +76,10 @@ export default class utils {
     }
     
     return result
+  }
+
+  static toJson(value: string): unknown{
+    return yaml.safeLoad(value)
   }
 }
 
