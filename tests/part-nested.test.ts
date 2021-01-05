@@ -36,3 +36,36 @@ test("part-nested", () => {
     expect(html).toContain("Message from inner part")
     expect(html).toContain("Sent from outer")
 })
+
+test("part-nested+content", ()=>{
+    const layoutTemplate = `
+    <html>
+        <body>
+            <outer-part></outer-part>
+        </body>
+    </html>
+    `
+    const outerPart = `
+    <template>
+        <inner-part items="values"></inner-part>
+    </template>
+    `
+    const innerPart = `
+    <!--#.items-->
+    <template loop="item of items">
+        <p>{{item.name}}</p>
+    </template>
+    `
+
+    const content = new Content([])
+    content.add("values", [{name:"item 1"}, {name:"item 2"}, {name:"item 3"}])
+    const layout = new Layout(new ContentInMemory("layout", layoutTemplate))
+    const parts = new PartCollection([
+        new ContentInMemory("outer-part", outerPart),
+        new ContentInMemory("inner-part", innerPart)
+    ])
+    const resolver = new TemplateResolver()
+    const html = resolver.resolve(layout, null, parts, content)
+    expect(html).toBeDefined()
+   // expect(html).toContain("item 1")
+})

@@ -75,9 +75,13 @@ export class TemplateInfo {
 
     // eslint-disable-next-line
     getLoopInfo(data: unknown){
-        iffalse(this.hasLoop, "Template hasn't contain 'lopp' statement")
+        iffalse(this.hasLoop, "Template hasn't contain 'loop' statement")
+        const info = utils.parseLoopStatement(this.loopAttr.nodeValue)
         
-        return utils.parseLoopStatement(this.loopAttr.nodeValue)
+        return {
+            items: data[info.items],
+            item: info.item
+        }
     }
 
     get empty(): boolean {

@@ -100,6 +100,7 @@ export class TemplateResolver {
     }
 
     resolveParts(element: DomProvider, parts: PartCollection, content: Content): void{
+        if (!parts.length) return
         let go = true
         while(go){
             for(const part of parts){
@@ -158,9 +159,9 @@ export class TemplateResolver {
 
     private applyLoop(root: DomProvider, {item, items}, template: HTMLTemplateElement, data: unknown){
         const frags = []
-        const values = data[items]
-        for (let i = 0; i < values.length; i++) {
-            data[item] = values[i];
+        
+        for (let i = 0; i < items.length; i++) {
+            data[item] = items[i];
             const html = root.applyTemplateData(template.innerHTML, data)
             frags.push(html)
         }
