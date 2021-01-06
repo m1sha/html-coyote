@@ -1,4 +1,4 @@
-import _ from './cli'
+import {info, succ, fail} from './cli'
 import __ from './strings'
 import { Site } from "./site"
 import { TemplateResolver } from './template-resolver'
@@ -17,15 +17,14 @@ if (process.env.watch){
   const server = new DevServer()
   server.start()
 } else {
-  _.info(__.StartSiteAssembly)
+  info(__.StartSiteAssembly)
   publishPages()
   publishAssets()
-  _.info(__.EndSiteAssembly)
+  info(__.EndSiteAssembly)
 }
 
-
 function publishPages(): void{
-  _.info(__.PublishPages)
+  info(__.PublishPages)
   for (const page of pages) {
     content.add(__.PageName, page.name)
     try {
@@ -46,7 +45,7 @@ function publishPages(): void{
       }
       
     } catch(e){
-      _.err(__.page(page.name, e.message))
+      fail(__.page(page.name, e.message))
     }
   }
 }
@@ -54,17 +53,16 @@ function publishPages(): void{
 function publishPage(layout: Layout, page: Page, publishFileName: string): void{
   const html = resolver.resolve(layout, page, parts, content)
   site.publishPage(publishFileName, html)
-  _.succ(__.page(publishFileName))
+  succ(__.page(publishFileName))
 }
 
 function publishAssets(): void{
-  _.info(__.Assets)
+  info(__.Assets)
   site.publishAssets((src, dist, err)=>{
     if (err){
-      _.err(`${err}. ${src}`)
+      fail(`${err}. ${src}`)
       return
     }
-    _.succ(`${dist}`)
-  
+    succ(`${dist}`)
   })
 }
