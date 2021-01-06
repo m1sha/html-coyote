@@ -171,7 +171,7 @@ export class TemplateResolver {
     private collectAttributeValues(elem: Element, attrs: string[], content: Content){
         for(let a = 0; a < attrs.length; a++){ 
             const attr = attrs[a]
-            let value = ''
+            let value = null
             
             if (attr.startsWith("@")){
                 value =  elem.innerHTML
@@ -179,9 +179,14 @@ export class TemplateResolver {
             
             if (attr.startsWith(".")) {
                 const a = attr.substring(1)
-                const attrValue = elem.attributes[a]
-                ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
-                value =  attrValue.nodeValue
+                let attrValue = elem.attributes[a]
+                if (!attrValue){
+                    attrValue = elem.attributes[':' + a]
+                    ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
+                    value = content.data[attrValue.nodeValue] // FIXME check attrValue.nodeValue on dot if exists 
+                } else{
+                    value = attrValue.nodeValue
+                }
             }
 
             const attrName = attr.substring(1)

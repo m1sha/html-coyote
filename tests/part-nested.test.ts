@@ -47,7 +47,7 @@ test("part-nested+content", ()=>{
     `
     const outerPart = `
     <template>
-        <inner-part items="values"></inner-part>
+        <inner-part :items="values"></inner-part>
     </template>
     `
     const innerPart = `
@@ -66,6 +66,7 @@ test("part-nested+content", ()=>{
     ])
     const resolver = new TemplateResolver()
     const html = resolver.resolve(layout, null, parts, content)
-    expect(html).toBeDefined()
-   // expect(html).toContain("item 1")
+    expect(html).toContain("<p>item 1</p>")
+    expect(html).toContain("<p>item 2</p>")
+    expect(html).toContain("<p>item 3</p>")
 })
