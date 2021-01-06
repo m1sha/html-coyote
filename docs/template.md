@@ -9,7 +9,7 @@
 ## The attribute-macros for the conditions
 The attributes below can be used in layout and/or part files
 * this-page - a template will be applied if the page is processing and the current page equal 
-* same-page - a template will be applied if the page is processing and the template page equal (When used markdown files as content, see more [The Template Content](./content.md))
+* same-page - a template will be applied if the page is processing and the template page equal (When used markdown files as content, see more [The Content](./content.md))
 * that-page - a template will be applied if the page is processing and the current page mismatched
   
 The attributes have a parameter the name of page. 
