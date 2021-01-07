@@ -5,6 +5,7 @@ import { Layout } from "./layout";
 import { Page } from "./page";
 import { Part, PartCollection } from "./part";
 import { ifdef, ifeq, ifnull } from './err';
+import utils from './utils';
 
 export class TemplateResolver {
 
@@ -183,7 +184,7 @@ export class TemplateResolver {
                 if (!attrValue){
                     attrValue = elem.attributes[':' + a]
                     ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
-                    value = content.data[attrValue.nodeValue] // FIXME check attrValue.nodeValue on dot if exists 
+                    value = utils.getValueFromObjectSafely(content.data, attrValue.nodeValue)
                 } else{
                     value = attrValue.nodeValue
                 }
@@ -194,3 +195,4 @@ export class TemplateResolver {
         }
     }
 }
+

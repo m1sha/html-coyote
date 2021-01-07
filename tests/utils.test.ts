@@ -55,3 +55,23 @@ test("utils.parseLoopStatement. Loop = '(item, index) of items'", () => {
     })
 
 })
+
+test("getValueFromObjectSafely", ()=>{
+
+    const data = {
+        prop:{
+            value: "value 1",
+            sub: {
+                count: 2
+            }
+        },
+        propBool: true,
+        propBool2: false
+    }
+    
+    expect(utils.getValueFromObjectSafely(data, "prop.value")).toEqual("value 1")
+    expect(utils.getValueFromObjectSafely(data, "prop.sub.count")).toEqual(2)
+    expect(utils.getValueFromObjectSafely(data, "propBool")).toBeTruthy()
+    expect(utils.getValueFromObjectSafely(data, "propBool2")).toBeFalsy()
+    expect(utils.getValueFromObjectSafely(data, "undefprop.subUndefprop")).toBeNull()
+})

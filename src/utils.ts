@@ -81,6 +81,22 @@ export default class utils {
   static toJson(value: string): unknown{
     return yaml.safeLoad(value)
   }
+
+  static getValueFromObjectSafely(obj: unknown, propName: string): unknown{
+    const name = propName.trim()
+    if (!name) throw new Error("null argument exception: utils.getValueFromObject(...,propName)")
+    if (!obj) return null
+    if (name.indexOf('.') < 0) return obj[name]
+    const subprops = name.split(".")
+    let result = obj[subprops[0]]
+    if (subprops.length > 1) 
+      for (let i = 1; i < subprops.length; i++) {
+        if (!result) return null
+        const prop = subprops[i];
+        result = result[prop]
+      }
+    return result
+  }
 }
 
 interface ILoopInfo{
