@@ -1,6 +1,6 @@
 
 import { Dictionary, KeyValuePairs } from './base-dictionary';
-import { IContentFile } from './fs-utils';
+import { ContentType, IContentFile } from './fs-utils';
 import { MdDocumentCollection } from './md-document';
 import utils from './utils';
 
@@ -13,11 +13,11 @@ export class Content {
         const mds = []
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            if (file.name.endsWith('.yml')){
+            if (file.type === ContentType.YAML){
                 this.dictionary.assign(utils.toJson(file.content))
             }
             
-            if (file.name.endsWith(".md") || file.name.endsWith(".markdown")){
+            if (file.type === ContentType.MD){
                 mds.push(file)
             }
         }
