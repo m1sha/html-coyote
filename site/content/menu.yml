@@ -1,4 +1,4 @@
-#menu items
+siteTitle: Croix
 menu:
     - { name: 'index', href: 'index.html', text: 'Home' }
     - { name: 'about', href: 'about.html', text: 'About' }

@@ -29,7 +29,7 @@ export class  MdDocument {
         const headers = this.tokens.filter(p=>p["type"] === 'heading' && p["depth"] > 1)
         for (let i = 0; i < headers.length; i++) {
             const name = headers[i]["text"] as string
-            const href = "#" + name.replace(/ /g, "-").toLocaleLowerCase()
+            const href = "#" + name.replace(/ /g, "-").replace(/[.]/g, "").toLocaleLowerCase()
             result.push({name, href })
         }
         return result

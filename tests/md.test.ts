@@ -27,8 +27,8 @@ mdoc.open()
 test("md headers", () => {
     const headers = mdoc.headers
     expect(headers).toEqual([
-        {  href:"#1.1-subheader-text-1", name: "1.1 Subheader text 1" },
-        {  href:"#1.2-subheader-text-2", name: "1.2 Subheader text 2" }
+        {  href:"#11-subheader-text-1", name: "1.1 Subheader text 1" },
+        {  href:"#12-subheader-text-2", name: "1.2 Subheader text 2" }
     ])
 })
 

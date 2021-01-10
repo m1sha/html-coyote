@@ -1,4 +1,8 @@
-# Croix
+---
+page: index
+---
+
+# Introduction 
 
 Croix is a HTML static site generator
 

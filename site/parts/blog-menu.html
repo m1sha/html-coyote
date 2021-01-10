@@ -4,7 +4,9 @@
 <template>
      <ul>
           <template loop="item of items">
-               <li>{{item.name}}</li>
+               <li>
+                    <a href="{{item.href}}">{{item.name}}</a>
+               </li>
           </template>
      </ul>
 </template>
