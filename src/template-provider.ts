@@ -79,7 +79,7 @@ export class TemplateInfo {
         const info = utils.parseLoopStatement(this.loopAttr.nodeValue)
         
         return {
-            items: data[info.items],
+            items: utils.getValueFromObjectSafely(data, info.items),
             item: info.item
         }
     }

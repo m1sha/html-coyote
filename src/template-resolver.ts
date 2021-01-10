@@ -69,7 +69,7 @@ export class TemplateResolver {
 
             if (info.hasIf){
                 ifResult = info.getIfResult(data)
-                this.applyIf(element, ifResult, template, data)
+                this.applyIf(element, ifResult, template, content)
                 _else = false
             }
 
@@ -79,7 +79,7 @@ export class TemplateResolver {
 
             if (info.hasElse){
                 ifdef(_else, "'Else' more one time")
-                this.applyElse(element, ifResult, template, data)
+                this.applyElse(element, ifResult, template, content)
                 _else = true
             }
 
@@ -95,7 +95,7 @@ export class TemplateResolver {
             }
 
             if (info.empty){
-                const html = element.applyTemplateData(template.innerHTML, data)
+                const html = this.resolveTemplateNested(element, template, content)
                 template.replaceWith(element.fragment(html))
             }
         }
@@ -138,9 +138,9 @@ export class TemplateResolver {
         }
     }
 
-    private applyIf(root: DomProvider, ifResult: boolean, template: HTMLTemplateElement, data: unknown){
+    private applyIf(root: DomProvider, ifResult: boolean, template: HTMLTemplateElement, content: Content){
         if (ifResult){
-            const html = root.applyTemplateData(template.innerHTML, data)
+            const html = this.resolveTemplateNested(root, template, content)
             template.replaceWith(root.fragment(html))
             return
         }
@@ -148,10 +148,10 @@ export class TemplateResolver {
         template.replaceWith(root.fragment(""))
     }
 
-    private applyElse(root: DomProvider, ifResult: unknown, template: HTMLTemplateElement, data: unknown){
+    private applyElse(root: DomProvider, ifResult: unknown, template: HTMLTemplateElement, content: Content){
         ifeq(ifResult, null, `Part '${root.name}' not found if statement`)
         if (!ifResult){
-           const html = root.applyTemplateData(template.innerHTML, data)
+           const html = this.resolveTemplateNested(root, template, content)
            template.replaceWith(root.fragment(html))
            return
         }
@@ -164,16 +164,19 @@ export class TemplateResolver {
         const data = content.data
         for (let i = 0; i < items.length; i++) {
             data[item] = items[i];
-
-            const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML))
-            el.attach()
-            this.resolveTemplate(el, content)
-            const body = el.documentBody
-            const html = root.applyTemplateData(body, data)
+            const html = this.resolveTemplateNested(root, template, content)
             frags.push(html)
         }
         
         template.replaceWith(root.fragment(frags.join("")))
+    }
+
+    private resolveTemplateNested(root: DomProvider, template: HTMLTemplateElement, content: Content): string{
+        const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML))
+        el.attach()
+        this.resolveTemplate(el, content)
+        const body = el.documentBody
+        return root.applyTemplateData(body, content.data)
     }
 
     private collectAttributeValues(elem: Element, attrs: string[], content: Content){

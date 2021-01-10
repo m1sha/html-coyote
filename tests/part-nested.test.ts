@@ -70,3 +70,33 @@ test("part-nested+content", ()=>{
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
 })
+
+test("part templete in templete", ()=>{
+    const layoutTemplate = `
+    <html>
+        <body>
+            <part></part>
+        </body>
+    </html>
+    `
+
+    const partTemplate = `
+    <template>
+        <ul>
+            <template loop="item of items">
+                <li>{{item.name}}</li>
+            </template>
+        </ul>
+    </template>
+    `
+    const content = new Content([])
+    content.add("items", [{name:"item 1"}, {name:"item 2"}, {name:"item 3"}])
+    const layout = new Layout(new ContentInMemory("layout", layoutTemplate))
+    const parts = new PartCollection([
+        new ContentInMemory("part", partTemplate)
+    ])
+
+    const resolver = new TemplateResolver()
+    const html = resolver.resolve(layout, null, parts, content)
+    expect(html).toContain("<li>item 1</li>")
+})

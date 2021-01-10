@@ -101,6 +101,45 @@ test("template in template", ()=>{
     expect(html).toContain("<span>value 3</span>")
 })
 
+test("double loop in template", ()=>{
+    const content = createContent()
+    const root = createDom(`
+        <ul>
+            <template loop="item of items">
+                <li>
+                    <p>{{item.name}}</p>
+                    <template if="item.subItems">
+                        <ul>
+                            <template loop="sub of item.subItems">
+                                <li>{{sub}}</li>
+                            </template>    
+                        </ul>
+                    </template>
+                </li>
+            </template>
+        </ul>
+    `)
+    root.attach()
+    content.add("items", [ 
+    {
+        name: "value 1",
+        subItems: ["subItem 1", "subItem 2", "subItem 3"]
+    }, 
+    {
+        name: "value 2"
+    }, 
+    {
+        name: "value 3"
+    } 
+    ])
+    content.add("current", "value 1")
+    const html = resolver.resolve(root, null, null, content)
+    expect(html).toContain("<p>value 1</p>")
+    expect(html).toContain("<li>subItem 1</li>")
+    expect(html).toContain("<li>subItem 2</li>")
+    expect(html).toContain("<li>subItem 3</li>")
+})
+
 
 function createDom(content: string): DomProvider{
     return new DomProvider(new ContentInMemory("root", content))
