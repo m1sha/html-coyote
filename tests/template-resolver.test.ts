@@ -76,6 +76,31 @@ test("template markdown", ()=>{
     expect(html).toContain(`<h1 id="hello">Hello</h1>`)
 })
 
+test("template in template", ()=>{
+    const content = createContent()
+    const root = createDom(`
+        <ul>
+            <template loop="item of items">
+                <li>
+                    <template if="current === item.name">
+                        <p>{{item.name}}</p>
+                    </template>
+                    <template else>
+                        <span>{{item.name}}</span>
+                    </template>
+                </li>
+            </template>
+        </ul>
+    `)
+    root.attach()
+    content.add("items", [ {name: "value 1"}, {name: "value 2"}, {name: "value 3"} ])
+    content.add("current", "value 1")
+    const html = resolver.resolve(root, null, null, content)
+    expect(html).toContain("<p>value 1</p>")
+    expect(html).toContain("<span>value 2</span>")
+    expect(html).toContain("<span>value 3</span>")
+})
+
 
 function createDom(content: string): DomProvider{
     return new DomProvider(new ContentInMemory("root", content))

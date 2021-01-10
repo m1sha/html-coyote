@@ -6,6 +6,7 @@ import { Page } from "./page";
 import { Part, PartCollection } from "./part";
 import { ifdef, ifeq, ifnull } from './err';
 import utils from './utils';
+import { ContentInMemory } from './fs-utils';
 
 export class TemplateResolver {
 
@@ -84,7 +85,7 @@ export class TemplateResolver {
 
             if (info.hasLoop){
                 const loop = info.getLoopInfo(data)
-                this.applyLoop(element, loop, template, data)
+                this.applyLoop(element, loop, template, content)
             }
 
             if (info.hasMarkdown){
@@ -158,14 +159,20 @@ export class TemplateResolver {
         template.replaceWith(root.fragment(""))
     }
 
-    private applyLoop(root: DomProvider, {item, items}, template: HTMLTemplateElement, data: unknown){
+    private applyLoop(root: DomProvider, {item, items}, template: HTMLTemplateElement, content: Content){
         const frags = []
-        
+        const data = content.data
         for (let i = 0; i < items.length; i++) {
             data[item] = items[i];
-            const html = root.applyTemplateData(template.innerHTML, data)
+
+            const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML))
+            el.attach()
+            this.resolveTemplate(el, content)
+            const body = el.documentBody
+            const html = root.applyTemplateData(body, data)
             frags.push(html)
         }
+        
         template.replaceWith(root.fragment(frags.join("")))
     }
 

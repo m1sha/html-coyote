@@ -32,4 +32,8 @@ export default class DomProvider extends TemplateProvider {
     toHtml(): string {
         return this.dom.serialize()
     }
+
+    get documentBody(): string{
+        return this.document.body.innerHTML
+    }
 }
