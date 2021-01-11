@@ -40,6 +40,7 @@ function publishPages(): void{
         const md = mds[i]
         md.open()
         content.add(__.Markdown, md)
+        content.add("meta", md.meta.data)
         publishFileName = md.name
         publishPage(layout, page, publishFileName)
       }

@@ -2,7 +2,7 @@
   "name": "croix",
   "version": "0.0.1",
   "description": "Croix is a generator static content for creating static HTML sites",
-  "private": true,
+  "main": "./dist/index.js",
   "scripts": {
     "build": "cross-env webpack",
     "dev": "cross-env ts-node src/main.ts",

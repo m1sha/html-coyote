@@ -77,9 +77,11 @@ export class MdDocumentCollection extends BaseCollection<MdDocument> {
 export class MdMeta {
 
     pageName: string
+    data: unknown
 
     constructor(data: unknown) {
         this.pageName = data["page"]
+        this.data = data
     }
 
 }
