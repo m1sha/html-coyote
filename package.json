@@ -1,8 +1,9 @@
 {
   "name": "html-coyote",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "HTML Coyote is a generator static content for creating static HTML sites",
   "main": "./dist/index.js",
+  "bin": {"coyote": "./dist/index.js"},
   "scripts": {
     "build": "cross-env webpack",
     "dev": "cross-env ts-node src/main.ts ../site",
@@ -16,6 +17,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/m1sha/html-coyote.git"
+  },
+  "bugs": {
+    "url": "https://github.com/m1sha/html-coyote/issues"
   },
   "homepage": "https://github.com/m1sha/html-coyote",
   "dependencies": {
