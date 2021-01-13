@@ -1,6 +1,6 @@
-# Croix
+# HTML Coyote
 
-Croix is a HTML static site generator
+HTML Coyote is a HTML static site generator
 
 ## Basic usage
 

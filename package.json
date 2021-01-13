@@ -1,18 +1,23 @@
 {
-  "name": "croix",
-  "version": "0.0.1",
-  "description": "Croix is a generator static content for creating static HTML sites",
+  "name": "html-coyote",
+  "version": "0.0.4",
+  "description": "HTML Coyote is a generator static content for creating static HTML sites",
   "main": "./dist/index.js",
   "scripts": {
     "build": "cross-env webpack",
-    "dev": "cross-env ts-node src/main.ts",
-    "dev:watch": "cross-env watch=true ts-node src/main.ts",
+    "dev": "cross-env ts-node src/main.ts ../site",
+    "dev:watch": "cross-env watch=true ts-node src/main.ts ../site",
     "test": "npx jest",
     "test:watch": "npx jest --watch"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["HTML", "static", "site", "generator"],
+  "author": "m1sha",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m1sha/html-coyote.git"
+  },
+  "homepage": "https://github.com/m1sha/html-coyote",
   "dependencies": {
     "chalk": "^4.1.0",
     "chokidar": "^2.1.8",
