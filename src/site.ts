@@ -9,8 +9,8 @@ import { Content } from "./content"
 export class Site{
     path: string
 
-    constructor(basepath: string){
-        this.path = path.resolve(__dirname, basepath)
+    constructor(basepath: string, name: string){
+        this.path = path.resolve(basepath, name)
     }
 
     get pages(): PageCollection{

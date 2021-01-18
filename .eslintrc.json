@@ -17,5 +17,6 @@
     ],
     "rules": {
         "no-var":"error"
-    }
+    },
+    "ignorePatterns": ["cli/cli.js"]
 }

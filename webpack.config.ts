@@ -4,20 +4,19 @@ import path from 'path'
 export default {
     entry:{
         index: "./src/main.ts",
-        
     },
     output: {
         path: path.resolve(__dirname, './dist'),
         libraryTarget: "commonjs2"
     },
-    mode:"development",
+    mode:"production",
     target: "node",
-    externals: [nodeExternals({ allowlist: /\.(css|vue)$/ })],
+    externals: [nodeExternals()],
     module:{
         rules: [
             {
               test: /\.ts$/,
-              loader: 'ts-loader'
+              loader: 'ts-loader',
             }
         ]
     },
@@ -27,9 +26,8 @@ export default {
 
     },
     resolve: {
-        extensions: ['.ts', '.vue', '.json'],
+        extensions: ['.ts', '.json'],
         alias: {
-          //'vue$': 'vue/dist/vue.esm.js',
           '@': path.resolve('src'),
         }
     }
