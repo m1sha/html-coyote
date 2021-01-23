@@ -13,12 +13,8 @@ pipelines:
             caches:
               - node
             script:
-              - npm install jest
+              - npm install -D jest
+              - npm install -D ts-jest
+              - npm install -D ts-node
               - npx jest
-        - step:
-            name: Code linting
-            script:
-              - npm install eslint
-              - npx eslint .
-            caches:
-              - node
+        
