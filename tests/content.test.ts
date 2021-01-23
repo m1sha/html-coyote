@@ -1,5 +1,5 @@
 import { ContentInMemory } from "../src/fs-utils"
-import { Content } from "../src/Content"
+import { Content } from "../src/content"
 
 test("Content class", () => {
     const filecontent = `
