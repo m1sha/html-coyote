@@ -13,6 +13,8 @@ pipelines:
             caches:
               - node
             script:
+              - npm install -D typescript
+              - npm install -D tslib
               - npm install -D jest
               - npm install -D ts-jest
               - npm install -D ts-node
