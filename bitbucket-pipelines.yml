@@ -13,8 +13,8 @@ pipelines:
             caches:
               - node
             script:
-              - npm install
-              - npm test
+              - npm install jest
+              - npx jest
         - step:
             name: Code linting
             script:
