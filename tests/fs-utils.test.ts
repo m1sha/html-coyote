@@ -1,13 +1,13 @@
 import path from "path"
-import {ls,loadfiles} from "../src/fs-utils"
+import {ls,loadFiles} from "../src/fs-utils"
 test("ls", ()=>{
     const dir = path.resolve(__dirname, "../site")
     const files = ls(dir, dir)
     expect(files.length > 0).toBeTruthy()
 })
 
-test("loadfiles", ()=>{
+test("loadFiles", ()=>{
     const dir = path.resolve(__dirname, "../site/pages")
-    const files = loadfiles(dir)
+    const files = loadFiles(dir)
     expect(files.length > 0).toBeTruthy()
 })

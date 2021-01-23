@@ -1,3 +1,4 @@
+import path from "path"
 import {info, succ, fail} from './msg'
 import __ from './strings'
 import { Site } from "./site"
@@ -8,17 +9,19 @@ import { Page, PageCollection } from './page'
 import { Content } from './content'
 import { PartCollection } from './part'
 
-export function run(): void {
-  const dir = process.cwd()
-  const site = new Site(dir, "site")
+export function run(watch: boolean, port: number): void {
+  const dir =path.resolve(process.cwd(), "site")
+  
+  info(`work directory: ${dir}`)
+  const site = new Site(dir)
   const layouts = site.layouts
   const pages = site.pages
   const parts = site.parts
   const content = site.content
   const resolver = new TemplateResolver()
 
-  if (process.env.watch){
-    const server = new DevServer()
+  if (watch){
+    const server = new DevServer(dir, port)
     server.start()
   } else {
     info(__.StartSiteAssembly)
@@ -26,6 +29,17 @@ export function run(): void {
     publishAssets(site)
     info(__.EndSiteAssembly)
   }
+}
+
+export function createNew(): void{
+  const dir = process.cwd()
+  Site.export(dir, (src, dist, err)=>{
+    if (err){
+      fail(`${err}. ${src}`)
+      return
+    }
+    succ(`${dist}`)
+  })
 }
 
 function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollection, parts: PartCollection, content: Content, resolver: TemplateResolver): void{

@@ -8,8 +8,7 @@
   },
   "scripts": {
     "build": "cross-env webpack",
-    "dev": "cross-env ts-node src/main.ts ../site",
-    "dev:watch": "cross-env watch=true ts-node src/main.ts ../site",
+    "cli": "node cli/cli.js run",
     "test": "npx jest",
     "test:watch": "npx jest --watch"
   },

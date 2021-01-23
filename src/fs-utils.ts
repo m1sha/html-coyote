@@ -121,7 +121,7 @@ export function ls(dir: string, root: string): IFile[]{
     return result
 }
 
-export function loadfiles (dir: string): ContentFile[]  { 
+export function loadFiles (dir: string): ContentFile[]  { 
     const files = ls(dir, dir)
     const result = []
     for (let index = 0; index < files.length; index++) {

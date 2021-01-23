@@ -1,25 +1,26 @@
 #!/usr/bin/env node
-const {run} = require("../dist")
+const {run, createNew} = require("../dist")
 require('yargs')
     .scriptName("coyo")
     .usage('Usage: $0 ')
-    .command('init [name]', 'init the lines in a file', (yargs) => {
-        yargs.positional('name', {
-          type: 'string',
-          default: 'Cambi',
-          describe: 'the name to say hello to'
-        })
-      }, argv=>{
-        console.log( argv.name)
-        console.log( argv.s)
+    .example('$0 run ', 'runs the site')
+    .command("new", "creates new site from default template", yargs=>{
+        createNew()
     })
-    .command("run", "run build the site assembly", argv=>{
-        run()
+    .command("publish", "publishes the site", yargs=>{
+      run(false, 0)
     })
-    .example('$0 init ', 'init the lines in the given file')
+    .command("run [port]", "runs the site on development server",
+    (yargs) => {
+      yargs.positional('name', {
+        type: 'int',
+        default: 7001,
+        describe: 'default port: 7001'
+      })
+    },
+    argv=>{
+      run(true, argv.port)
+    })
     .help('h')
     .alias('h', 'help')
     .argv;
-
-
-

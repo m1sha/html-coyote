@@ -1,4 +1,4 @@
-import {loadfiles, ls} from "./fs-utils"
+import {loadFiles, ls} from "./fs-utils"
 import fs from "fs"
 import path from "path"
 import { PageCollection } from "./page"
@@ -9,24 +9,24 @@ import { Content } from "./content"
 export class Site{
     path: string
 
-    constructor(basepath: string, name: string){
-        this.path = path.resolve(basepath, name)
+    constructor(baseDir: string){
+        this.path = baseDir
     }
 
     get pages(): PageCollection{
-        return new PageCollection(loadfiles(join(this.path, "pages")))
+        return new PageCollection(loadFiles(join(this.path, "pages")))
     }
 
     get parts(): PartCollection{
-        return new PartCollection(loadfiles(join(this.path, "parts")))
+        return new PartCollection(loadFiles(join(this.path, "parts")))
     }
 
     get layouts(): LayoutCollection{
-        return new LayoutCollection(loadfiles(join(this.path, "layouts")))
+        return new LayoutCollection(loadFiles(join(this.path, "layouts")))
     }
 
     get content(): Content{
-        return new Content(loadfiles(join(this.path, "content")))
+        return new Content(loadFiles(join(this.path, "content")))
     }
 
     get publishPath(): string{
@@ -42,21 +42,32 @@ export class Site{
 
     publishAssets(action: CallableFunction): void{
         const publishPath = this.publishPath
-        const asstesPath = join(this.path, "assets")
-        const files = ls(asstesPath, asstesPath)
+        const assetsPath = join(this.path, "assets")
+        Site.copy(assetsPath, publishPath, action)
+    }
+
+    static export(distDir: string, action: CallableFunction): void{
+        const srcDir = path.resolve(__dirname, "../site")
+        distDir = path.resolve(distDir, "site")
+        mkdir(distDir)
+        Site.copy(srcDir, distDir, action)
+    }
+
+    static copy(src: string, dist: string, action: CallableFunction): void{
+        const files = ls(src, src)
         for(let i = 0; i < files.length; i++){
             const file = files[i]
-            let distFilename = join(publishPath, file.name)
+            let distFilename = join(dist, file.name)
             let errorMessage = null;
 
             if (file.dir){
                 try{
-                    mkdir(join(publishPath, file.dir))
+                    mkdir(join(dist, file.dir))
                 } catch(e){
                     errorMessage = e.message
                 }
                
-               distFilename = join(publishPath, file.dir, file.name)
+               distFilename = join(dist, file.dir, file.name)
             }
 
             try {
