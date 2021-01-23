@@ -18,5 +18,9 @@ pipelines:
               - npm install -D jest
               - npm install -D ts-jest
               - npm install -D ts-node
+              - npm install jsdom
+              - npm install marked
+              - npm install js-yaml
+              - npm install lodash
               - npx jest
         
