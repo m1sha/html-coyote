@@ -61,6 +61,11 @@ export class TemplateResolver {
         let ifResult = null
         let _else = false
         let count = 0
+        if (templates.length === 0){
+            element.document.documentElement.innerHTML = element.applyTemplateData(element.document.documentElement.innerHTML, content.data)
+            return
+        }
+
         while(templates.length > 0){
             ifeq(templates.length, count, __.infinityLoopDetected(element.name))
             count = templates.length
