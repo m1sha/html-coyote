@@ -58,3 +58,26 @@ test("layout-nested. slot in part", ()=> {
     expect(html).toContain("The content from page")
     expect(html).toContain("Subitem 1")
 })
+
+test("expression in title tag", ()=>{
+    const layoutTemplate = `<html>
+    <head>
+        <slot name="header"></slot>
+    <head>
+    </html>
+    `
+    const pageTemplate = `
+    <template slot="header">
+        <title>
+            {{title}}
+        </title>
+    </template>
+    `
+    const resolver = new TemplateResolver()
+    const layout = new Layout(new ContentInMemory("layout", layoutTemplate))
+    const page = new Page(new ContentInMemory("index", pageTemplate))
+    const content = new Content([])
+    content.add("title", "Hello")
+    const html = resolver.resolve(layout, page, null, content)
+    expect(html).toContain("Hello")
+})
