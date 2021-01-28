@@ -1,8 +1,9 @@
-import { ContentInMemory } from "../src/fs-utils"
-import { Part } from "../src/part"
+import { 
+    createPart, 
+} from "./helpers"
 
 test("attrs should be 3", () => {
-    const part = createPart(`
+    const part = createPart("part", `
         <!--#
         .name
         .href
@@ -16,7 +17,7 @@ test("attrs should be 3", () => {
 })
 
 test("attrs should be 1", ()=>{
-    const part = createPart(`
+    const part = createPart("part", `
         <!--#
         .attr
         -->
@@ -28,7 +29,7 @@ test("attrs should be 1", ()=>{
 })
 
 test("attrs should be @content only", ()=>{
-    const part = createPart(`
+    const part = createPart("part", `
         <!--#
     
         @content
@@ -41,6 +42,3 @@ test("attrs should be @content only", ()=>{
     expect(attrs).toEqual(["@content"])
 })
 
-function createPart(content: string): Part{
-    return new Part(new ContentInMemory("test", content))
-}

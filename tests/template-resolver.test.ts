@@ -1,10 +1,7 @@
-import { ContentInMemory } from "../src/fs-utils"
+import {createContent, createFile, createMd, createResolver} from "./helpers"
 import  DomProvider  from "../src/dom-provider"
-import { Content } from "../src/content"
-import { TemplateResolver } from "../src/template-resolver"
-import { MdDocument } from "../src/md-document"
 import __ from "../src/strings"
-const resolver = new TemplateResolver()
+const resolver = createResolver()
 
 test ("if-else-statement", ()=>{
     const content = createContent()
@@ -68,7 +65,7 @@ test ("loop-statement", ()=>{
 test("template markdown", ()=>{
     const content = createContent()
     const root = createDom(`<template markdown></template>`)
-    const md = new MdDocument(new ContentInMemory("file.md",`# Hello`))
+    const md = createMd("file.md",`# Hello`)
     md.open()
     content.add(__.Markdown, md)
     root.attach()
@@ -142,9 +139,5 @@ test("double loop in template", ()=>{
 
 
 function createDom(content: string): DomProvider{
-    return new DomProvider(new ContentInMemory("root", content))
-}
-
-function createContent(): Content{
-    return new Content([])
+    return new DomProvider(createFile("root", content))
 }

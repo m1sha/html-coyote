@@ -1,21 +1,20 @@
 import { ContentInMemory } from "../src/fs-utils"
-import { Content } from "../src/content"
+import {createContent} from "./helpers"
 
 test("Content class", () => {
-    const filecontent = `
+    const fileContent = `
 #menu items
 menu:
     - { name: 'index', href: 'index.html', text: 'Home' }
     - { name: 'about', href: 'about.html', text: 'About' }
     - { name: 'contacts', href: 'contacts.html', text: 'Contacts' }
-    - { name: 'galary', href: 'galary.html', text: 'Galary' }
 `
-    const filecontent2 = `
+    const fileContent2 = `
 foo: true
 `
-    const content = new Content([
-        new ContentInMemory("menu.yml", filecontent),
-        new ContentInMemory("foo.yml", filecontent2)
+    const content = createContent([
+        new ContentInMemory("menu.yml", fileContent),
+        new ContentInMemory("foo.yml", fileContent2)
     ])
     
     expect(content.data.menu).toBeDefined();
@@ -23,7 +22,7 @@ foo: true
 })
 
 test("Content add data", () => {
-    const content = new Content([])
+    const content = createContent()
     content.add("__pageName", "foo")
 
     expect(content.data.__pageName).toEqual("foo")

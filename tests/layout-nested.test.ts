@@ -1,9 +1,10 @@
-import { Content } from "../src/content"
-import { ContentInMemory } from "../src/fs-utils"
-import { Layout } from "../src/layout"
-import { TemplateResolver } from "../src/template-resolver"
-import { Page } from "../src/page"
-import { PartCollection } from "../src/part"
+import { 
+    createLayout, 
+    createPage, 
+    createResolver, 
+    createContent, 
+    createFile,
+    createParts} from "./helpers"
 import strings from "../src/strings"
 
 test("layout-nested. slot in part", ()=> {
@@ -46,11 +47,11 @@ test("layout-nested. slot in part", ()=> {
     </template>
     `
 
-    const resolver = new TemplateResolver()
-    const layout = new Layout(new ContentInMemory("layout", layoutTemplate))
-    const page = new Page(new ContentInMemory("index", pageTemplate))
-    const parts = new PartCollection([new ContentInMemory("menu-item", partTemplate)])
-    const content = new Content([])
+    const resolver = createResolver()
+    const layout = createLayout("layout", layoutTemplate)
+    const page = createPage("index", pageTemplate)
+    const parts = createParts([createFile("menu-item", partTemplate)])
+    const content = createContent()
     content.add(strings.PageName, "index")
     content.add("items", [{name: "Item 1", href: "index.html"}, {name: "Item 2", href: "index2.html"}])
     const html = resolver.resolve(layout, page, parts, content)
@@ -73,10 +74,10 @@ test("expression in title tag", ()=>{
         </title>
     </template>
     `
-    const resolver = new TemplateResolver()
-    const layout = new Layout(new ContentInMemory("layout", layoutTemplate))
-    const page = new Page(new ContentInMemory("index", pageTemplate))
-    const content = new Content([])
+    const resolver = createResolver()
+    const layout = createLayout("layout", layoutTemplate)
+    const page = createPage("index", pageTemplate)
+    const content = createContent()
     content.add("title", "Hello")
     const html = resolver.resolve(layout, page, null, content)
     expect(html).toContain("Hello")

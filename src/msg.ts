@@ -11,3 +11,8 @@ export function succ(message: string): void{
 export function info(message: string): void{
     console.log(chalk.whiteBright(message))    
 }
+
+export function log(obj: unknown, message: string): void{
+    console.log(chalk.blueBright(message))    
+    console.dir(obj)
+}

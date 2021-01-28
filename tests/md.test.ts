@@ -1,7 +1,6 @@
-import { ContentInMemory } from "../src/fs-utils"
-import { MdDocument } from "../src/md-document"
+import { createMd } from "./helpers"
 
-const mdtext =`
+const mdText =`
 ---
 page: index
 title: "Title"
@@ -24,7 +23,7 @@ The attributes have a parameter the name of page.
 \`\`\`
     
 `
-const mdoc = new MdDocument(new ContentInMemory("file.md", mdtext))
+const mdoc = createMd("file.md", mdText)
 mdoc.open()
 
 test("md headers", () => {
@@ -40,11 +39,11 @@ test("md content", () => {
     expect(html).toContain("Templates")
 })
 
-test("md meta pageName", ()=>{
+test("md meta pageName", () => {
     expect(mdoc.meta.pageName).toEqual("index")
 })
 
-test("md meta data", ()=>{
+test("md meta data", () => {
     expect(mdoc.meta.data["author"].name).toEqual("AuthorName")
     expect(mdoc.meta.data["title"]).toEqual("Title")
 })
