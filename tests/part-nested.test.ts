@@ -3,8 +3,7 @@ import {
     createResolver, 
     createContent, 
     createFile,
-    createParts,
-    createPart} from "./helpers"
+    createParts } from "./helpers"
 
 test("part-nested", () => {
     const layoutTemplate = `
@@ -105,8 +104,15 @@ test("part template in template", ()=>{
 
 
 test("parts with objects as parameters", ()=>{
+    const layout = createLayout("layout", `
+    <html>
+        <body>
+            <main-menu :items="menu" />
+        </body>
+    </html>
+    `)
     const menu = createFile("main-menu", `
-    <!--#items-->
+    <!--#.items-->
     <template>
         <nav>
             <ul>
@@ -118,7 +124,7 @@ test("parts with objects as parameters", ()=>{
     </template>
     `)
     const menuItem = createFile("main-menu-item", `
-    <!--#item-->
+    <!--#.item-->
     <template>
         <li>
             <template if="__pageName == item.name">
@@ -130,6 +136,14 @@ test("parts with objects as parameters", ()=>{
         </li>
     </template>
     `)
-    createParts([menu, menuItem])
+    const parts = createParts([menu, menuItem])
+    const content = createContent([createFile("settings.yml", `
+menu: 
+    - { name: "index", url: "index.html", title: "Home" }
+    - { name: "about", url: "about.html", title: "About" }
+    `)])
+    content.add("__pageName", "index")
+    const resolver = createResolver()
+    const html = resolver.resolve(layout, null, parts, content)
     expect(true).toBeTruthy()
 })
