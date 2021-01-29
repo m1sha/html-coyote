@@ -1,7 +1,7 @@
 import {createContent, createFile, createMd, createResolver} from "./helpers"
 import  DomProvider  from "../src/dom-provider"
 import __ from "../src/strings"
-const resolver = createResolver()
+
 
 test ("if-else-statement", ()=>{
     const content = createContent()
@@ -17,13 +17,15 @@ test ("if-else-statement", ()=>{
     content.add("a", 1)
     content.add("b", 1)
     root.attach()
-    resolver.resolveTemplate(root, content)
+    let resolver = createResolver(root, null, null, content)
+    resolver.resolve()
     expect(root.toHtml()).toContain("<p>foo</p>")
 
     content.add("a", 1)
     content.add("b", 2)
     root.attach()
-    resolver.resolveTemplate(root, content)
+    resolver = createResolver(root, null, null, content)
+    resolver.resolve()
     expect(root.toHtml()).toContain("<p>bar</p>")
 })
 
@@ -38,7 +40,8 @@ test ("if only 'else'", ()=>{
     try{
         content.add("a", 1)
         content.add("b", 1)
-        resolver.resolveTemplate(root, content)
+        const resolver = createResolver(root, null, null, content)
+        resolver.resolve()
         expect(true).toBeFalsy()
     } catch(e){
         expect(e).toBeDefined()
@@ -54,8 +57,8 @@ test ("loop-statement", ()=>{
     `)
     root.attach()
     content.add("values", [ {name: "value 1"}, {name: "value 2"}, {name: "value 3"} ])
-    resolver.resolveTemplate(root, content)
-
+    const resolver = createResolver(root, null, null, content)
+    resolver.resolve()
     const html = root.toHtml();
     expect(html).toContain("<p>value 1</p>")
     expect(html).toContain("<p>value 2</p>")
@@ -69,7 +72,8 @@ test("template markdown", ()=>{
     md.open()
     content.add(__.Markdown, md)
     root.attach()
-    const html = resolver.resolve(root, null, null, content)
+    const resolver = createResolver(root, null, null, content)
+    const html = resolver.resolve()
     expect(html).toContain(`<h1 id="hello">Hello</h1>`)
 })
 
@@ -92,7 +96,8 @@ test("template in template", ()=>{
     root.attach()
     content.add("items", [ {name: "value 1"}, {name: "value 2"}, {name: "value 3"} ])
     content.add("current", "value 1")
-    const html = resolver.resolve(root, null, null, content)
+    const resolver = createResolver(root, null, null, content)
+    const html = resolver.resolve()
     expect(html).toContain("<p>value 1</p>")
     expect(html).toContain("<span>value 2</span>")
     expect(html).toContain("<span>value 3</span>")
@@ -130,7 +135,8 @@ test("double loop in template", ()=>{
     } 
     ])
     content.add("current", "value 1")
-    const html = resolver.resolve(root, null, null, content)
+    const resolver = createResolver(root, null, null, content)
+    const html = resolver.resolve()
     expect(html).toContain("<p>value 1</p>")
     expect(html).toContain("<li>subItem 1</li>")
     expect(html).toContain("<li>subItem 2</li>")

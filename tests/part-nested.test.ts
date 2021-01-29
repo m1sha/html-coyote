@@ -32,8 +32,8 @@ test("part-nested", () => {
         createFile("outer-part", outerPart)
     ])
 
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, createContent())
+    const resolver = createResolver(layout, null, parts, createContent())
+    const html = resolver.resolve()
     expect(html).toContain("Message from inner part")
     expect(html).toContain("Sent from outer")
 })
@@ -65,8 +65,8 @@ test("part-nested+content", ()=>{
         createFile("outer-part", outerPart),
         createFile("inner-part", innerPart)
     ])
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, content)
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
@@ -97,8 +97,8 @@ test("part template in template", ()=>{
         createFile("part", partTemplate)
     ])
 
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, content)
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
     expect(html).toContain("<li>item 1</li>")
 })
 
@@ -143,7 +143,7 @@ menu:
     - { name: "about", url: "about.html", title: "About" }
     `)])
     content.add("__pageName", "index")
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, content)
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
     expect(true).toBeTruthy()
 })

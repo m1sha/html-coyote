@@ -6,7 +6,7 @@ import {
     createFile,
     createParts} from "./helpers"
 
-const resolver = createResolver()
+
 const content = createContent([createFile("menu.yml", `
 menu:
     - item 1
@@ -28,8 +28,8 @@ test("layout + template content", () => {
     </body>
     </html>
     `) 
-    
-    const html = resolver.resolve(layout, null, null, content)
+    const resolver = createResolver(layout, null, null, content)
+    const html = resolver.resolve()
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
@@ -50,8 +50,8 @@ test("layout + page", () => {
     </template>
     `)
 
-    
-    const html = resolver.resolve(layout, page, null, null)
+    const resolver = createResolver(layout, page, null, null)
+    const html = resolver.resolve()
     expect(html).toContain("<p>Page Content</p>")
 })
 
@@ -74,7 +74,8 @@ test("layout + part", ()=>{
     `)
 
     layout.attach()
-    const html = resolver.resolve(layout, null, createParts([ part ]), createContent())
+    const resolver = createResolver(layout, null, createParts([ part ]), createContent())
+    const html = resolver.resolve()
     expect(html).toContain("<p>value</p>")
 
 })
@@ -99,8 +100,8 @@ test("layout + content data + part", ()=>{
     <p>{{attr}}</p>
     </template>
     `)
-   
-    const html = resolver.resolve(layout, null, createParts([ part ]), content)
+    const resolver = createResolver(layout, null, createParts([ part ]), content)
+    const html = resolver.resolve()
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")

@@ -47,14 +47,15 @@ test("layout-nested. slot in part", ()=> {
     </template>
     `
 
-    const resolver = createResolver()
+    
     const layout = createLayout("layout", layoutTemplate)
     const page = createPage("index", pageTemplate)
     const parts = createParts([createFile("menu-item", partTemplate)])
     const content = createContent()
     content.add(strings.PageName, "index")
     content.add("items", [{name: "Item 1", href: "index.html"}, {name: "Item 2", href: "index2.html"}])
-    const html = resolver.resolve(layout, page, parts, content)
+    const resolver = createResolver(layout, page, parts, content)
+    const html = resolver.resolve()
     expect(html).toContain("Item 1")
     expect(html).toContain("The content from page")
     expect(html).toContain("Subitem 1")
@@ -74,11 +75,12 @@ test("expression in title tag", ()=>{
         </title>
     </template>
     `
-    const resolver = createResolver()
+    
     const layout = createLayout("layout", layoutTemplate)
     const page = createPage("index", pageTemplate)
     const content = createContent()
     content.add("title", "Hello")
-    const html = resolver.resolve(layout, page, null, content)
+    const resolver = createResolver(layout, page, null, content)
+    const html = resolver.resolve()
     expect(html).toContain("Hello")
 })
