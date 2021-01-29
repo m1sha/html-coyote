@@ -185,8 +185,8 @@ export class TemplateResolver {
     }
 
     private collectAttributeValues(elem: Element, attrs: string[], content: Content){
-        for(let a = 0; a < attrs.length; a++){ 
-            const attr = attrs[a]
+        for(let i = 0; i < attrs.length; i++){ 
+            const attr = attrs[i]
             let value = null
             
             if (attr.startsWith("@")){
@@ -195,12 +195,12 @@ export class TemplateResolver {
             
             if (attr.startsWith(".")) {
                 const a = attr.substring(1)
-                let attrValue = elem.attributes[a]
-                if (!attrValue){
-                    attrValue = elem.attributes[':' + a]
-                    ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
+                let attrValue = elem.attributes[':' + a]
+                if (attrValue){
                     value = utils.getValueFromObjectSafely(content.data, attrValue.nodeValue)
                 } else{
+                    attrValue = elem.attributes[a]
+                    ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
                     value = attrValue.nodeValue
                 }
             }

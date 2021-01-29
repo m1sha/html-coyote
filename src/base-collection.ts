@@ -27,5 +27,10 @@ export abstract class BaseCollection<T> {
             }
           }
         } as IterableIterator<T>
-    }    
+    }
+    
+    add(item: T): this & BaseCollection<T>{
+      this.items.push(item)
+      return this;
+    }
 }

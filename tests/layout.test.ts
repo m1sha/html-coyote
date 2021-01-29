@@ -1,19 +1,21 @@
-import { Page } from "../src/page"
-import { Content } from "../src/content"
-import { ContentInMemory, IContentFile } from "../src/fs-utils"
-import { Layout } from "../src/layout"
-import { Part, PartCollection } from "../src/part"
-import { TemplateResolver } from "../src/template-resolver"
-const resolver = new TemplateResolver()
-const content = new Content([new ContentInMemory("menu.yml", `
+import { 
+    createLayout, 
+    createPage, 
+    createResolver, 
+    createContent, 
+    createFile,
+    createParts} from "./helpers"
+
+const resolver = createResolver()
+const content = createContent([createFile("menu.yml", `
 menu:
     - item 1
     - item 2
     - item 3
 `)])
 
-test("layout + template content", ()=>{
-    const layout = createLayout(`
+test("layout + template content", () => {
+    const layout = createLayout("layout", `
     <html>
     <body>
         <nav>
@@ -34,7 +36,7 @@ test("layout + template content", ()=>{
 })
 
 test("layout + page", () => {
-    const layout = createLayout(`
+    const layout = createLayout("layout", `
     <html>
     <body>
         <slot name="place-holder"></slot>
@@ -42,7 +44,7 @@ test("layout + page", () => {
     </html>
     `)
 
-    const page = createPage(`
+    const page = createPage("page", `
     <template slot="place-holder">
         <p>Page Content</p>
     </template>
@@ -54,7 +56,7 @@ test("layout + page", () => {
 })
 
 test("layout + part", ()=>{
-    const layout = createLayout(`
+    const layout = createLayout("layout", `
     <html>
     <body>
        <part-component attr="value" />
@@ -62,7 +64,7 @@ test("layout + part", ()=>{
     </html>
     `)
 
-    const part = createFile(`
+    const part = createFile("part-component", `
     <!--#
     .attr
     -->
@@ -72,14 +74,14 @@ test("layout + part", ()=>{
     `)
 
     layout.attach()
-    const html = resolver.resolve(layout, null, createParts([ part ]), new Content([]))
+    const html = resolver.resolve(layout, null, createParts([ part ]), createContent())
     expect(html).toContain("<p>value</p>")
 
 })
 
 test("layout + content data + part", ()=>{
 
-    const layout = createLayout(`
+    const layout = createLayout("layout", `
     <html>
     <body>
        <template loop="item of menu">
@@ -89,7 +91,7 @@ test("layout + content data + part", ()=>{
     </html>
     `)
 
-    const part = createFile(`
+    const part = createFile("part-component", `
     <!--#
     .attr
     -->
@@ -103,19 +105,3 @@ test("layout + content data + part", ()=>{
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
 })
-
-function createLayout(content: string): Layout {
-    return new Layout(new ContentInMemory("layout", content))
-}
-
-function createPage(content: string): Page{
-    return new Page(new ContentInMemory("page", content))
-}
-
-function createFile(content: string): IContentFile{
-    return new ContentInMemory("part-component", content)
-}
-
-function createParts(parts: IContentFile[]){
-    return new PartCollection(parts)
-}
