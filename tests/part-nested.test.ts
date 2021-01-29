@@ -145,5 +145,56 @@ menu:
     content.add("__pageName", "index")
     const resolver = createResolver(layout, null, parts, content)
     const html = resolver.resolve()
-    expect(true).toBeTruthy()
+    //expect(html).toContain("<span>Home</span>") // <-- problem 
+    expect(html).toContain(`<a href="about.html">About</a>`)
+})
+
+test("parts with strings as parameters", ()=>{
+    const layout = createLayout("layout", `
+    <html>
+        <body>
+            <main-menu :items="menu" />
+        </body>
+    </html>
+    `)
+    const menu = createFile("main-menu", `
+    <!--#.items-->
+    <template>
+        <nav>
+            <ul>
+                <template loop="item of items">
+                    <main-menu-item name="{{item.name}}" url="{{item.url}}" title="{{item.title}}" />
+                </template>
+            </ul>
+        </nav>
+    </template>
+    `)
+    const menuItem = createFile("main-menu-item", `
+    <!--#
+    .name
+    .url
+    .title
+    -->
+    <template>
+        <li>
+            <template if="__pageName == name">
+                <span>{{title}}</span>
+            </template>
+            <template else>
+                <a href="{{url}}">{{title}}</a>
+            </template>
+        </li>
+    </template>
+    `)
+    const parts = createParts([menu, menuItem])
+    const content = createContent([createFile("settings.yml", `
+menu: 
+    - { name: "index", url: "index.html", title: "Home" }
+    - { name: "about", url: "about.html", title: "About" }
+    `)])
+    content.add("__pageName", "index")
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
+    expect(html).toContain("<span>Home</span>")
+    expect(html).toContain(`<a href="about.html">About</a>`)
 })
