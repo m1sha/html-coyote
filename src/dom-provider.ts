@@ -25,15 +25,15 @@ export default class DomProvider extends TemplateProvider {
         this.document = document
     }
 
-    fragment(frag: string): DocumentFragment {
-        return JSDOM.fragment(frag)
-    }
-
     toHtml(): string {
         return this.dom.serialize()
     }
 
     get documentBody(): string{
         return this.document.body.innerHTML
+    }
+
+    static createFragment(frag: string): DocumentFragment {
+        return JSDOM.fragment(frag)
     }
 }

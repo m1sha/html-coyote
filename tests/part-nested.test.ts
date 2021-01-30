@@ -32,8 +32,8 @@ test("part-nested", () => {
         createFile("outer-part", outerPart)
     ])
 
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, createContent())
+    const resolver = createResolver(layout, null, parts, createContent())
+    const html = resolver.resolve()
     expect(html).toContain("Message from inner part")
     expect(html).toContain("Sent from outer")
 })
@@ -65,8 +65,8 @@ test("part-nested+content", ()=>{
         createFile("outer-part", outerPart),
         createFile("inner-part", innerPart)
     ])
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, content)
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
     expect(html).toContain("<p>item 1</p>")
     expect(html).toContain("<p>item 2</p>")
     expect(html).toContain("<p>item 3</p>")
@@ -97,8 +97,8 @@ test("part template in template", ()=>{
         createFile("part", partTemplate)
     ])
 
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, content)
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
     expect(html).toContain("<li>item 1</li>")
 })
 
@@ -143,7 +143,58 @@ menu:
     - { name: "about", url: "about.html", title: "About" }
     `)])
     content.add("__pageName", "index")
-    const resolver = createResolver()
-    const html = resolver.resolve(layout, null, parts, content)
-    expect(true).toBeTruthy()
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
+    expect(html).toContain("<span>Home</span>")
+    expect(html).toContain(`<a href="about.html">About</a>`)
+})
+
+test("parts with strings as parameters", ()=>{
+    const layout = createLayout("layout", `
+    <html>
+        <body>
+            <main-menu :items="menu" />
+        </body>
+    </html>
+    `)
+    const menu = createFile("main-menu", `
+    <!--#.items-->
+    <template>
+        <nav>
+            <ul>
+                <template loop="item of items">
+                    <main-menu-item name="{{item.name}}" url="{{item.url}}" title="{{item.title}}" />
+                </template>
+            </ul>
+        </nav>
+    </template>
+    `)
+    const menuItem = createFile("main-menu-item", `
+    <!--#
+    .name
+    .url
+    .title
+    -->
+    <template>
+        <li>
+            <template if="__pageName == name">
+                <span>{{title}}</span>
+            </template>
+            <template else>
+                <a href="{{url}}">{{title}}</a>
+            </template>
+        </li>
+    </template>
+    `)
+    const parts = createParts([menu, menuItem])
+    const content = createContent([createFile("settings.yml", `
+menu: 
+    - { name: "index", url: "index.html", title: "Home" }
+    - { name: "about", url: "about.html", title: "About" }
+    `)])
+    content.add("__pageName", "index")
+    const resolver = createResolver(layout, null, parts, content)
+    const html = resolver.resolve()
+    expect(html).toContain("<span>Home</span>")
+    expect(html).toContain(`<a href="about.html">About</a>`)
 })

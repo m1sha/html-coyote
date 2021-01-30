@@ -30,8 +30,8 @@ export function createContent(files?: IContentFile[]): Content{
     return new Content(!files ? []: files)
 }
 
-export function createResolver():TemplateResolver{
-    return new TemplateResolver()
+export function createResolver(layout: Layout, page: Page, parts: PartCollection, content: Content):TemplateResolver{
+    return new TemplateResolver(layout, page, parts, content)
 }
 
 export function createMd(name: string, content: string): MdDocument {
