@@ -1,11 +1,9 @@
-import {createContent, createFile, createMd, createResolver} from "./helpers"
-import  DomProvider  from "../src/dom-provider"
+import {createLayout, createContent, createMd, createResolver} from "./helpers"
 import __ from "../src/strings"
-
 
 test ("if-else-statement", ()=>{
     const content = createContent()
-    const root = createDom(`
+    const root = createLayout("layout.html", `
         <template if="a === b">
             <p>foo</p>
         </template>
@@ -31,7 +29,7 @@ test ("if-else-statement", ()=>{
 
 test ("if only 'else'", ()=>{
     const content = createContent()
-    const root = createDom(`
+    const root = createLayout("layout.html", `
         <template else>
             <p>bar</p>
         </template>
@@ -50,7 +48,7 @@ test ("if only 'else'", ()=>{
 
 test ("loop-statement", ()=>{
     const content = createContent()
-    const root = createDom(`
+    const root = createLayout("layout.html", `
         <template loop="value of values">
             <p>{{value.name}}</p>
         </template>
@@ -67,7 +65,7 @@ test ("loop-statement", ()=>{
 
 test("template markdown", ()=>{
     const content = createContent()
-    const root = createDom(`<template markdown></template>`)
+    const root = createLayout("layout.html", `<template markdown></template>`)
     const md = createMd("file.md",`# Hello`)
     md.open()
     content.add(__.Markdown, md)
@@ -79,7 +77,7 @@ test("template markdown", ()=>{
 
 test("template in template", ()=>{
     const content = createContent()
-    const root = createDom(`
+    const root = createLayout("layout.html", `
         <ul>
             <template loop="item of items">
                 <li>
@@ -105,7 +103,7 @@ test("template in template", ()=>{
 
 test("double loop in template", ()=>{
     const content = createContent()
-    const root = createDom(`
+    const root = createLayout("layout.html",`
         <ul>
             <template loop="item of items">
                 <li>
@@ -144,6 +142,3 @@ test("double loop in template", ()=>{
 })
 
 
-function createDom(content: string): DomProvider{
-    return new DomProvider(createFile("root", content))
-}

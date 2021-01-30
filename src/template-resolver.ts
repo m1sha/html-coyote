@@ -37,7 +37,7 @@ export class TemplateResolver {
             if (this.parts)
             {
                 ifnull(this.content, __.CannotResolvePartsIfContentUndefined)
-                this.resolveParts()
+                this.resolveParts(this.layout)
             }
         }
         
@@ -61,8 +61,9 @@ export class TemplateResolver {
             count = slots.length
             
             const frag = this.page.templates[slot.name]
-            slot.replaceWith(this.layout.fragment(frag))
+            slot.replaceWith(DomProvider.createFragment(frag))
         }
+
         return true
     }
 
@@ -107,84 +108,87 @@ export class TemplateResolver {
             if (info.hasMarkdown){
                 ifnull(data.markdown, `Can't found markdown-document`)
                 const html = data.markdown["content"]
-                template.replaceWith(domProvider.fragment(html))
+                template.replaceWith(DomProvider.createFragment(html))
             }
 
             if (info.empty){
                 const html = this.resolveTemplateNested(domProvider, template)
-                template.replaceWith(domProvider.fragment(html))
+                template.replaceWith(DomProvider.createFragment(html))
             }
         }
     }
 
-    private resolveParts(): void{
-        if (!this.parts.length) return
+    private resolveParts(domProvider: DomProvider): void{
+        if (!this.parts || !this.parts.length) return
         let go = true
         while(go){
             for(const part of this.parts){
           
-                const elems = this.layout.document.getElementsByTagName(part.name)
-                if (!elems.length){
+                const tags = domProvider.document.getElementsByTagName(part.name)
+                if (!tags.length){
                     go = false
                     continue
                 }
      
-                this.resolvePart(elems, this.layout, part)
+                this.resolvePart(tags, domProvider, part)
                 go = true
             }
         }
         
     }
 
-    private resolvePart(elems: HTMLCollectionOf<Element>, domProvider: DomProvider, part: Part){
+    private resolvePart(tags: HTMLCollectionOf<Element>, domProvider: DomProvider, part: Part){
         let index = 0
-        while  (elems.length > 0) { 
-            ifeq(elems.length, index, __.infinityLoopDetected(domProvider.name))
-            index = elems.length
+        while  (tags.length > 0) { 
+            ifeq(tags.length, index, __.infinityLoopDetected(domProvider.name))
+            index = tags.length
 
             part.attach()
             const attrs = part.attrs
    
-            const elem = elems[0]
-            this.collectAttributeValues(elem, attrs)
+            const tag = tags[0]
+            this.collectAttributeValues(tag, attrs)
             this.resolveTemplate(part)
             
             const html = part.toHtml()
-            elem.replaceWith(domProvider.fragment(html))
+            tag.replaceWith(DomProvider.createFragment(html))
         }
     }
 
     private applyIf(domProvider: DomProvider, ifResult: boolean, template: HTMLTemplateElement){
         if (ifResult){
             const html = this.resolveTemplateNested(domProvider, template)
-            template.replaceWith(domProvider.fragment(html))
+            template.replaceWith(DomProvider.createFragment(html))
             return
         }
         
-        template.replaceWith(domProvider.fragment(""))
+        template.replaceWith(DomProvider.createFragment(""))
     }
 
     private applyElse(domProvider: DomProvider, ifResult: unknown, template: HTMLTemplateElement){
         ifeq(ifResult, null, `Part '${domProvider.name}' not found if statement`)
         if (!ifResult){
            const html = this.resolveTemplateNested(domProvider, template)
-           template.replaceWith(domProvider.fragment(html))
+           template.replaceWith(DomProvider.createFragment(html))
            return
         }
         
-        template.replaceWith(domProvider.fragment(""))
+        template.replaceWith(DomProvider.createFragment(""))
     }
 
-    private applyLoop(domProvider: DomProvider, {item, items}, template: HTMLTemplateElement){
+    private applyLoop(domProvider: DomProvider, { item, items }, template: HTMLTemplateElement){
         const frags = []
         const data = this.content.data
         for (let i = 0; i < items.length; i++) {
             data[item] = items[i];
             const html = this.resolveTemplateNested(domProvider, template)
-            frags.push(html)
+            const component = new DomProvider(new ContentInMemory("part.html", html))
+            component.attach()
+            this.resolveParts(component)
+            frags.push(component.toHtml())
         }
         
-        template.replaceWith(domProvider.fragment(frags.join("")))
+        template.replaceWith(DomProvider.createFragment(frags.join("")))
     }
 
     private resolveTemplateNested(domProvider: DomProvider, template: HTMLTemplateElement): string{

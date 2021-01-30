@@ -145,7 +145,7 @@ menu:
     content.add("__pageName", "index")
     const resolver = createResolver(layout, null, parts, content)
     const html = resolver.resolve()
-    //expect(html).toContain("<span>Home</span>") // <-- problem 
+    expect(html).toContain("<span>Home</span>")
     expect(html).toContain(`<a href="about.html">About</a>`)
 })
 
