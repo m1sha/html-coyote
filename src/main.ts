@@ -18,14 +18,14 @@ export function run(watch: boolean, port: number): void {
   const pages = site.pages
   const parts = site.parts
   const content = site.content
-  const resolver = new TemplateResolver()
+  
 
   if (watch){
     const server = new DevServer(dir, port)
     server.start()
   } else {
     info(__.StartSiteAssembly)
-    publishPages(site, layouts, pages, parts, content, resolver)
+    publishPages(site, layouts, pages, parts, content)
     publishAssets(site)
     info(__.EndSiteAssembly)
   }
@@ -42,7 +42,7 @@ export function createNew(): void{
   })
 }
 
-function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollection, parts: PartCollection, content: Content, resolver: TemplateResolver): void{
+function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollection, parts: PartCollection, content: Content): void{
   info(__.PublishPages)
   for (const page of pages) {
     content.add(__.PageName, page.name)
@@ -53,7 +53,7 @@ function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollectio
       const mds = content.documents.find(page.name)
       let publishFileName = page.name
       if (!mds.length){
-        publishPage(site, layout, page, parts, content, resolver, publishFileName)
+        publishPage(site, layout, page, parts, content, publishFileName)
       }
       else for (let i = 0; i< mds.length; i++){
         const md = mds[i]
@@ -61,7 +61,7 @@ function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollectio
         content.add(__.Markdown, md)
         content.add("meta", md.meta.data)
         publishFileName = md.name
-        publishPage(site, layout, page, parts, content, resolver, publishFileName)
+        publishPage(site, layout, page, parts, content, publishFileName)
       }
       
     } catch(e){
@@ -70,8 +70,9 @@ function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollectio
   }
 }
 
-function publishPage(site: Site, layout: Layout, page: Page, parts: PartCollection, content: Content, resolver: TemplateResolver, publishFileName: string): void{
-  const html = resolver.resolve(layout, page, parts, content)
+function publishPage(site: Site, layout: Layout, page: Page, parts: PartCollection, content: Content,  publishFileName: string): void{
+  const resolver = new TemplateResolver(layout, page, parts, content)
+  const html = resolver.resolve()
   site.publishPage(publishFileName, html)
   succ(__.page(publishFileName))
 }
