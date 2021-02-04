@@ -1,10 +1,9 @@
 language: node_js
 node_js:
-  - "7"
+  - "14.8.0"
 cache:
   npm: false
 install:
-  - npm install -g npm
   - npm install -D typescript
   - npm install -D tslib
   - npm install -D jest
