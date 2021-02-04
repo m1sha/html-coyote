@@ -1,8 +1,17 @@
 language: node_js
 node_js:
   - "7"
+cache:
+  npm: false
 install:
-  - npm install jest
-  - npm install
+  - npm install -D typescript
+  - npm install -D tslib
+  - npm install -D jest
+  - npm install -D ts-jest
+  - npm install -D ts-node
+  - npm install jsdom
+  - npm install marked
+  - npm install js-yaml
+  - npm install lodash
 script:
   - npx jest
