@@ -14,4 +14,4 @@ install:
   - npm install js-yaml
   - npm install lodash
 script:
-  - npm exec -- jest
+  - npm test
