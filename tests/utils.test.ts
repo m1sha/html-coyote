@@ -69,9 +69,34 @@ test("getValueFromObjectSafely", ()=>{
         propBool2: false
     }
     
-    expect(utils.getValueFromObjectSafely(data, "prop.value")).toEqual("value 1")
-    expect(utils.getValueFromObjectSafely(data, "prop.sub.count")).toEqual(2)
-    expect(utils.getValueFromObjectSafely(data, "propBool")).toBeTruthy()
-    expect(utils.getValueFromObjectSafely(data, "propBool2")).toBeFalsy()
-    expect(utils.getValueFromObjectSafely(data, "undefprop.subUndefprop")).toBeNull()
+    expect(utils.getValueFromObject(data, "prop.value")).toEqual("value 1")
+    expect(utils.getValueFromObject(data, "prop.sub.count")).toEqual(2)
+    expect(utils.getValueFromObject(data, "propBool")).toBeTruthy()
+    expect(utils.getValueFromObject(data, "propBool2")).toBeFalsy()
+})
+
+test("getValueFromObject object undefine", ()=>{
+    try {
+        const data = {}
+        utils.getValueFromObject(data, "items")
+        expect(false).toBeTruthy()
+    } catch (error) {
+        expect(error.message).toEqual("Object items isn't define")
+    }
+})
+
+test("getValueFromObject property undefine", ()=>{
+    try {
+        const data = {
+            value:  {
+                defineValue: true
+            }
+        }
+        const define = utils.getValueFromObject(data, "value.defineValue")
+        expect(define).toBeTruthy()
+        utils.getValueFromObject(data, "value.undefineValue")
+        expect(false).toBeTruthy()
+    } catch (error) {
+        expect(error.message).toEqual("Property undefineValue isn't define in value.undefineValue")
+    }
 })

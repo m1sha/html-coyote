@@ -65,16 +65,17 @@ function publishPages(site: Site,layouts: LayoutCollection, pages: PageCollectio
       }
       
     } catch(e){
-      fail(__.page(page.name, e.message))
+      fail("Error: " + e.message)
     }
   }
 }
 
 function publishPage(site: Site, layout: Layout, page: Page, parts: PartCollection, content: Content,  publishFileName: string): void{
+  info(__.page(publishFileName))
   const resolver = new TemplateResolver(layout, page, parts, content)
   const html = resolver.resolve()
   site.publishPage(publishFileName, html)
-  succ(__.page(publishFileName))
+  succ("[ ok ]")
 }
 
 function publishAssets(site: Site): void{

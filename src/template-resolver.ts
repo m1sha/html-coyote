@@ -45,7 +45,6 @@ export class TemplateResolver {
     }
 
     private resolvePage(): boolean{
-        
         ifnull(this.page, __.PageShouldBeDefined)
         this.page.attach()
 
@@ -73,6 +72,7 @@ export class TemplateResolver {
         let ifResult = null
         let _else = false
         let count = 0
+        
         if (templates.length === 0){
             domProvider.document.documentElement.innerHTML = domProvider.applyTemplateData(domProvider.document.documentElement.innerHTML, this.content.data)
             return
@@ -83,7 +83,7 @@ export class TemplateResolver {
             count = templates.length
             const template = templates[0]
             const info = domProvider.getTemplateInfo(template)
-
+            
             if (info.hasIf){
                 ifResult = info.getIfResult(data)
                 this.applyIf(domProvider, ifResult, template)
@@ -182,7 +182,7 @@ export class TemplateResolver {
         for (let i = 0; i < items.length; i++) {
             data[item] = items[i];
             const html = this.resolveTemplateNested(domProvider, template)
-            const component = new DomProvider(new ContentInMemory("part.html", html))
+            const component = new DomProvider(new ContentInMemory("part.html", html), domProvider)
             component.attach()
             this.resolveParts(component)
             frags.push(component.toHtml())
@@ -192,7 +192,7 @@ export class TemplateResolver {
     }
 
     private resolveTemplateNested(domProvider: DomProvider, template: HTMLTemplateElement): string{
-        const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML))
+        const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML), domProvider)
         el.attach()
         this.resolveTemplate(el)
         const body = el.documentBody
@@ -216,7 +216,7 @@ export class TemplateResolver {
                 const a = attr.substring(1)
                 let attrValue = elem.attributes[':' + a]
                 if (attrValue){
-                    value = utils.getValueFromObjectSafely(this.content.data, attrValue.nodeValue)
+                    value = utils.getValueFromObject(this.content.data, attrValue.nodeValue)
                 } else{
                     attrValue = elem.attributes[a]
                     ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);

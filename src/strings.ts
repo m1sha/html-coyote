@@ -4,12 +4,12 @@ export default class strings {
     static readonly StartSiteAssembly: string = "Start site assembly\n"
     static readonly PublishPages: string = "\nPublish pages"
     static readonly Assets: string = "\nAssets"
-    static readonly EndSiteAssembly: string = "\nSite assembly complited"
+    static readonly EndSiteAssembly: string = "\nSite assembly completed"
     static readonly LayoutShouldBeDefined = "Layout should be defined"
     static readonly PageShouldBeDefined = "Page should be defined"
     static readonly CannotResolvePartsIfContentUndefined = "Can't resolve parts if content undefined"
     static page(pageName: string, message?: string): string{
-        return `page: ${pageName}. ${message}`
+        return `${pageName}.html ${(message ? '. ' + message: '')}`
     }
     static infinityLoopDetected(source: string): string{
         return `Detected infinity loop. Source: '${source}'`

@@ -4,16 +4,13 @@ import jsdom from "jsdom"
 const { JSDOM } = jsdom
 
 export default class DomProvider extends TemplateProvider {
-    protected file: IContentFile
+   
     protected dom: jsdom.JSDOM
-
     name: string
     document: Document
 
-    constructor(file: IContentFile) {
-        super()
-
-        this.file = file
+    constructor(file: IContentFile, originProvider?: DomProvider) {
+        super(file, originProvider)
         this.name = file.name
         this.dom = new JSDOM('')
         this.document = this.dom.window.document

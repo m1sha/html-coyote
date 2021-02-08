@@ -9,6 +9,14 @@ export default class utils {
         throw new Error(`loop statement must contain keyword 'of'`)
       }
 
+      let matches = /([a-zA-Z1-9]+?)\s+of\s+([a-zA-Z1-9.]+)/.exec(value)
+      if (!matches){
+        matches = /\(([a-zA-Z0-9]+)\S+,\s+([a-z]+)\)\s+of\s+([a-zA-Z0-9.]+)/.exec(value)
+        if (!matches)
+          throw new Error(`The loop '${value}' has a some problem`)
+      }
+      
+
       const params = value.split(" ").filter(p=>p)
       if (params.length === 3){
          return {
@@ -82,18 +90,29 @@ export default class utils {
     return yaml.safeLoad(value)
   }
 
-  static getValueFromObjectSafely(obj: unknown, propName: string): unknown{
+  static getValueFromObject(obj: unknown, propName: string): unknown{
     const name = propName.trim()
     if (!name) throw new Error("null argument exception: utils.getValueFromObject(...,propName)")
     if (!obj) return null
-    if (name.indexOf('.') < 0) return obj[name]
-    const subprops = name.split(".")
-    let result = obj[subprops[0]]
-    if (subprops.length > 1) 
-      for (let i = 1; i < subprops.length; i++) {
+    if (name.indexOf('.') < 0) {
+      if (!Object.prototype.hasOwnProperty.call(obj, name)) 
+        throw new Error(`Object ${name} isn't define`)
+      return obj[name]
+    }
+    const keys = name.split(".")
+    if (!Object.prototype.hasOwnProperty.call(obj, keys[0])) 
+        throw new Error(`Object ${keys[0]} isn't define`)
+
+    let result = obj[keys[0]]
+    if (keys.length > 1) 
+      for (let i = 1; i < keys.length; i++) {
         if (!result) return null
-        const prop = subprops[i];
-        result = result[prop]
+
+        const key = keys[i];
+        if (!Object.prototype.hasOwnProperty.call(result, key)) 
+          throw new Error(`Property ${key} isn't define in ${name}`)
+          
+        result = result[key]
       }
     return result
   }
