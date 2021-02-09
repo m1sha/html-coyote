@@ -1,6 +1,6 @@
 import * as yaml from 'js-yaml'
 export default class utils {
-  static parseLoopStatement(value: string): ILoopInfo { //TODO Rewrite method 'parseLoopStatement'
+  static parseLoopStatement(value: string): ILoopInfo {
       if (!value){
         throw new Error(`Empty loop statement`)
       }
@@ -9,28 +9,26 @@ export default class utils {
         throw new Error(`loop statement must contain keyword 'of'`)
       }
 
-      let matches = /([a-zA-Z1-9]+?)\s+of\s+([a-zA-Z1-9.]+)/.exec(value)
+      let matches = /([a-zA-Z1-9]+?)\s+of\s+([a-zA-Z1-9.]+)\s*$/.exec(value)
       if (!matches){
-        matches = /\(([a-zA-Z0-9]+)\S+,\s+([a-z]+)\)\s+of\s+([a-zA-Z0-9.]+)/.exec(value)
+        matches = /^\(\s*([a-zA-Z0-9]+)\s*,\s*([a-zA-Z0-9]+)\s*\)\s+of\s+([a-zA-Z0-9.]+)\s*$/.exec(value)
         if (!matches)
-          throw new Error(`The loop '${value}' has a some problem`)
+          throw new Error(`The loop '${value}' has a syntax error`)
       }
       
-
-      const params = value.split(" ").filter(p=>p)
-      if (params.length === 3){
+      if (matches.length === 3){
          return {
-             item: params[0],
+             item: matches[1],
              index: '',
-             items: params[2]
+             items: matches[2]
          }
       }
 
-      if (params.length === 4){
+      if (matches.length === 4){
         return {
-            item: params[0].replace("(","").replace(",",""),
-            index: params[1].replace(")",""),
-            items: params[3]
+            item: matches[1],
+            index: matches[2],
+            items: matches[3]
         }
       }
      
