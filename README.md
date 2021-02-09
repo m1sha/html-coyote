@@ -6,6 +6,8 @@
 The project is in active development and has a lot of bugs. Use it for informational purposes only. First working version will begin 0.1.x.
 The release is scheduled for the first decade of April.
 
+![HTML-Coyote](logo.png "HTML-Coyote")
+
 # Introduction 
 
 HTML-Coyote is a HTML static site generator
