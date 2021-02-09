@@ -10,7 +10,7 @@ export class Page extends DomProvider  {
     }
 
     get templates(): unknown{
-        const templates = this.document.getElementsByTagName("template")
+        const templates = this.getTemplates()
         const r = {}
         for(let i=0; i < templates.length; i++){
             const template = templates[i]
@@ -23,19 +23,21 @@ export class Page extends DomProvider  {
     }
 
     get layoutName(): string{
-        const nodes = this.document.childNodes
-        for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
-            if (node.nodeType === 8 && node.nodeValue.startsWith("#layout=")) {  //TODO: If more than an one throwing the error "#layout must be one only"
-                let name = node.nodeValue.substring(8)  
-                if (name.endsWith(".html")){
-                    name = name.substring(0, name.length - 5)
-                }
-
-                return name
-            }
+        const layouts = this.getComments().filter(p=>p.startsWith("#layout="))
+        if (!layouts){
+            throw new Error(`#layout directive isn't defined`)
         }
-        return ""
+
+        if (layouts.length > 1){
+            throw new Error(`#layout is defined more than one time`)
+        }
+
+        let name = layouts[0].substring(8)  
+        if (name.endsWith(".html")){
+            name = name.substring(0, name.length - 5)
+        }
+
+        return name
     }
 
 }

@@ -7,10 +7,6 @@ export class Layout extends DomProvider {
     constructor(file: IContentFile){
         super(file)
     }
-
-    findSlots(): HTMLCollectionOf<HTMLSlotElement>{
-        return this.document.getElementsByTagName("slot")
-    }
 }
 
 export class LayoutCollection extends BaseCollection<Layout>{

@@ -7,7 +7,7 @@ export default class DomProvider extends TemplateProvider {
    
     protected dom: jsdom.JSDOM
     name: string
-    document: Document
+    private document: Document
 
     constructor(file: IContentFile, originProvider?: DomProvider) {
         super(file, originProvider)
@@ -28,6 +28,32 @@ export default class DomProvider extends TemplateProvider {
 
     get documentBody(): string{
         return this.document.body.innerHTML
+    }
+
+    get innerHTML(): string{
+        return this.document.documentElement.innerHTML
+    }
+
+    set innerHTML(value: string){
+        this.document.documentElement.innerHTML = value
+    }
+
+    getTemplates(): HTMLCollectionOf<HTMLTemplateElement>{
+        return this.document.getElementsByTagName("template")
+    }
+
+    getParts(name: string): HTMLCollectionOf<Element>{
+        return this.document.getElementsByTagName(name)
+    }
+
+    findSlots(): HTMLCollectionOf<HTMLSlotElement>{
+        return this.document.getElementsByTagName("slot")
+    }
+
+    getComments(): string[]{
+        return Array.from(this.document.childNodes)
+            .filter(p=>p.nodeType === 8)
+            .map(p=>p.nodeValue)
     }
 
     static createFragment(frag: string): DocumentFragment {

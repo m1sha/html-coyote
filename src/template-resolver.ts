@@ -68,13 +68,13 @@ export class TemplateResolver {
 
     private resolveTemplate(domProvider: DomProvider): void{
         const data = this.content.data
-        const templates = domProvider.document.getElementsByTagName("template")
+        const templates = domProvider.getTemplates()
         let ifResult = null
         let _else = false
         let count = 0
         
         if (templates.length === 0){
-            domProvider.document.documentElement.innerHTML = domProvider.applyTemplateData(domProvider.document.documentElement.innerHTML, this.content.data)
+            domProvider.innerHTML = domProvider.applyTemplateData(domProvider.innerHTML, this.content.data)
             return
         }
 
@@ -124,7 +124,7 @@ export class TemplateResolver {
         while(go){
             for(const part of this.parts){
           
-                const tags = domProvider.document.getElementsByTagName(part.name)
+                const tags = domProvider.getParts(part.name)
                 if (!tags.length){
                     go = false
                     continue

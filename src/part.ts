@@ -11,22 +11,20 @@ export class Part extends DomProvider {
 
     get attrs(): string[] {
         const result = []
-        const nodes = this.document.childNodes
-        for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
-            if (node.nodeType === 8 && node.nodeValue.startsWith("#")) { 
-                node.nodeValue
-                    .substring(1)
-                    .split("\n")
-                    .filter(p=>p && p.trim() && p.replace("\t", "").trim())
-                    .map(p => {
-                        const v = p.replace("\r", "").trim()
-                        iftrue (v.indexOf(" ") > -1 && (!v.startsWith(".") || !v.startsWith("@")), `Part '${this.name}' can't parse attr '${v}'`)
-                        return v
-                    })
-                    .forEach(p=> result.push(p))
-                node.remove()
-            }
+        const comments = this.getComments().filter(p=>p.startsWith("#"))
+        
+        for (let i = 0; i < comments.length; i++) {
+            const comment = comments[i];
+            comment
+                .substring(1)
+                .split("\n")
+                .filter(p=>p && p.trim() && p.replace("\t", "").trim())
+                .map(p => {
+                    const v = p.replace("\r", "").trim()
+                    iftrue (v.indexOf(" ") > -1 && (!v.startsWith(".") || !v.startsWith("@")), `Part '${this.name}' can't parse attr '${v}'`)
+                    return v
+                })
+                .forEach(p=> result.push(p))
         }
         return result
     }
