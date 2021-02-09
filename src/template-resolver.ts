@@ -1,6 +1,6 @@
 import __ from './strings'
 import { Content } from "./content";
-import DomProvider from "./dom-provider";
+import { DomElementCollectionOf, DomProvider, PartDomElement, TemplateDomElement } from "./dom-provider";
 import { Layout } from "./layout";
 import { Page } from "./page";
 import { Part, PartCollection } from "./part";
@@ -48,19 +48,19 @@ export class TemplateResolver {
         ifnull(this.page, __.PageShouldBeDefined)
         this.page.attach()
 
-        const slots = this.layout.findSlots()
+        const slots = this.layout.getSlots()
         if (slots.length == 0){
             return false
         }
 
         let count = 0
         while(slots.length > 0){
-            const slot = slots[0]
+            const slot = slots.first
             ifeq(slots.length, count, __.infinityLoopDetected(slot.name))
             count = slots.length
             
             const frag = this.page.templates[slot.name]
-            slot.replaceWith(DomProvider.createFragment(frag))
+            slot.inject(frag)
         }
 
         return true
@@ -81,7 +81,7 @@ export class TemplateResolver {
         while(templates.length > 0){
             ifeq(templates.length, count, __.infinityLoopDetected(domProvider.name))
             count = templates.length
-            const template = templates[0]
+            const template = templates.first
             const info = domProvider.getTemplateInfo(template)
             
             if (info.hasIf){
@@ -108,12 +108,12 @@ export class TemplateResolver {
             if (info.hasMarkdown){
                 ifnull(data.markdown, `Can't found markdown-document`)
                 const html = data.markdown["content"]
-                template.replaceWith(DomProvider.createFragment(html))
+                template.inject(html)
             }
 
             if (info.empty){
                 const html = this.resolveTemplateNested(domProvider, template)
-                template.replaceWith(DomProvider.createFragment(html))
+                template.inject(html)
             }
         }
     }
@@ -137,7 +137,7 @@ export class TemplateResolver {
         
     }
 
-    private resolvePart(tags: HTMLCollectionOf<Element>, domProvider: DomProvider, part: Part){
+    private resolvePart(tags: DomElementCollectionOf<PartDomElement>, domProvider: DomProvider, part: Part){
         let index = 0
         while  (tags.length > 0) { 
             ifeq(tags.length, index, __.infinityLoopDetected(domProvider.name))
@@ -146,37 +146,37 @@ export class TemplateResolver {
             part.attach()
             const attrs = part.attrs
    
-            const tag = tags[0]
+            const tag = tags.first
             this.collectAttributeValues(tag, attrs)
             this.resolveTemplate(part)
             
             const html = part.toHtml()
-            tag.replaceWith(DomProvider.createFragment(html))
+            tag.inject(html)
         }
     }
 
-    private applyIf(domProvider: DomProvider, ifResult: boolean, template: HTMLTemplateElement){
+    private applyIf(domProvider: DomProvider, ifResult: boolean, template: TemplateDomElement){
         if (ifResult){
             const html = this.resolveTemplateNested(domProvider, template)
-            template.replaceWith(DomProvider.createFragment(html))
+            template.inject(html)
             return
         }
         
-        template.replaceWith(DomProvider.createFragment(""))
+        template.remove()
     }
 
-    private applyElse(domProvider: DomProvider, ifResult: unknown, template: HTMLTemplateElement){
+    private applyElse(domProvider: DomProvider, ifResult: unknown, template: TemplateDomElement){
         ifeq(ifResult, null, `Part '${domProvider.name}' not found if statement`)
         if (!ifResult){
            const html = this.resolveTemplateNested(domProvider, template)
-           template.replaceWith(DomProvider.createFragment(html))
+           template.inject(html)
            return
         }
         
-        template.replaceWith(DomProvider.createFragment(""))
+        template.remove()
     }
 
-    private applyLoop(domProvider: DomProvider, { item, items }, template: HTMLTemplateElement){
+    private applyLoop(domProvider: DomProvider, { item, items }, template: TemplateDomElement){
         const frags = []
         const data = this.content.data
         for (let i = 0; i < items.length; i++) {
@@ -188,10 +188,10 @@ export class TemplateResolver {
             frags.push(component.toHtml())
         }
         
-        template.replaceWith(DomProvider.createFragment(frags.join("")))
+        template.inject(frags.join(""))
     }
 
-    private resolveTemplateNested(domProvider: DomProvider, template: HTMLTemplateElement): string{
+    private resolveTemplateNested(domProvider: DomProvider, template: TemplateDomElement): string{
         const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML), domProvider)
         el.attach()
         this.resolveTemplate(el)
@@ -203,24 +203,25 @@ export class TemplateResolver {
 
     // }
 
-    private collectAttributeValues(elem: Element, attrs: string[]){
+    private collectAttributeValues(elem: PartDomElement, attrs: string[]){
         for(let i = 0; i < attrs.length; i++){ 
             const attr = attrs[i]
             let value = null
             
             if (attr.startsWith("@")){
-                value =  elem.innerHTML
+                value = elem.innerHTML
             } 
             
             if (attr.startsWith(".")) {
                 const a = attr.substring(1)
-                let attrValue = elem.attributes[':' + a]
+                
+                let attrValue = elem.getAttributeByName(':' + a)
                 if (attrValue){
-                    value = utils.getValueFromObject(this.content.data, attrValue.nodeValue)
+                    value = utils.getValueFromObject(this.content.data, attrValue.value)
                 } else{
-                    attrValue = elem.attributes[a]
-                    ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
-                    value = attrValue.nodeValue
+                    attrValue = elem.getAttributeByName(a)
+                    ifnull(attrValue, `Tag '${elem.name}' hasn't contain attribute '${a}'`);
+                    value = attrValue.value
                 }
             }
 

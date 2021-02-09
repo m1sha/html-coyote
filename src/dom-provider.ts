@@ -3,11 +3,10 @@ import {IContentFile} from "./fs-utils"
 import jsdom from "jsdom"
 const { JSDOM } = jsdom
 
-export default class DomProvider extends TemplateProvider {
-   
-    protected dom: jsdom.JSDOM
-    name: string
+export class DomProvider extends TemplateProvider {
+    private dom: jsdom.JSDOM
     private document: Document
+    readonly name: string
 
     constructor(file: IContentFile, originProvider?: DomProvider) {
         super(file, originProvider)
@@ -38,16 +37,16 @@ export default class DomProvider extends TemplateProvider {
         this.document.documentElement.innerHTML = value
     }
 
-    getTemplates(): HTMLCollectionOf<HTMLTemplateElement>{
-        return this.document.getElementsByTagName("template")
+    getTemplates(): DomElementCollectionOf<TemplateDomElement>{
+        return this.getElementsByTagName<TemplateDomElement>("template", p => new TemplateDomElement(p))
     }
 
-    getParts(name: string): HTMLCollectionOf<Element>{
-        return this.document.getElementsByTagName(name)
+    getParts(name: string): DomElementCollectionOf<PartDomElement>{
+        return this.getElementsByTagName<PartDomElement>(name, p => new PartDomElement(p))
     }
 
-    findSlots(): HTMLCollectionOf<HTMLSlotElement>{
-        return this.document.getElementsByTagName("slot")
+    getSlots(): DomElementCollectionOf<SlotDomElement>{
+        return this.getElementsByTagName<SlotDomElement>("slot", p => new SlotDomElement(p))
     }
 
     getComments(): string[]{
@@ -56,7 +55,100 @@ export default class DomProvider extends TemplateProvider {
             .map(p=>p.nodeValue)
     }
 
-    static createFragment(frag: string): DocumentFragment {
-        return JSDOM.fragment(frag)
+    private getElementsByTagName<T extends DomElement>(tagName: string, activator: CallableFunction) :DomElementCollectionOf<T>{
+        return new DomElementCollectionOf(this.document, tagName, activator) as DomElementCollectionOf<T>
     }
+}
+
+export class DomElementCollectionOf<T extends DomElement>{
+    private readonly document: Document
+    private readonly tagName: string
+    private readonly activator: CallableFunction
+
+    private get items(): T[]{
+        const tags = this.document.getElementsByTagName(this.tagName)
+        return Array.from(tags).map(p=>this.activator(p))
+    }
+
+    constructor(document: Document, tagName: string, activator: CallableFunction){
+        this.document = document
+        this.tagName = tagName
+        this.activator = activator
+    }
+    
+    get first(): T{
+        return this.items[0]
+    }
+
+    get(index: number): T{
+        return this.items[index]
+    }
+
+    get length(): number{
+        return this.items.length
+    }
+}
+
+export abstract class DomElement{
+    protected readonly element: HTMLElement
+
+    constructor(element: HTMLElement){
+        this.element = element
+    }
+
+    inject(frag: string): void{
+        this.element.replaceWith(JSDOM.fragment(frag))
+    }
+
+    hasAttribute(name: string): boolean{
+        return !!this.element.attributes.getNamedItem(name)
+    }
+
+    getAttributeByName(name: string): IDomAttribute{
+        const attr = this.element.attributes.getNamedItem(name)
+        if (!attr) return null
+        return {
+            name,
+            value: attr.nodeValue
+        }
+    }
+
+    remove(): void{
+        this.element.remove()
+    }
+
+    get innerHTML(): string{
+        return this.element.innerHTML
+    }
+}
+
+export class TemplateDomElement extends DomElement{
+    constructor(element: HTMLTemplateElement){
+        super(element)
+    }
+}
+
+export class PartDomElement extends DomElement{
+    constructor(element: HTMLElement){
+        super(element)
+    }
+
+    get name(): string{
+        return this.element.tagName.toLocaleLowerCase()
+    }
+}
+
+export class SlotDomElement extends DomElement{
+    constructor(element: HTMLSlotElement){
+        super(element)
+    }
+
+    get name(): string{
+        return (this.element as HTMLSlotElement).name
+    }
+}
+
+export interface IDomAttribute{
+    readonly name: string
+    readonly value: string
 }

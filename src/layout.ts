@@ -1,5 +1,5 @@
 import {IContentFile} from "./fs-utils"
-import DomProvider from "./dom-provider"
+import { DomProvider } from "./dom-provider"
 import { BaseCollection } from "./base-collection"
 import { ifnull } from "./err"
 

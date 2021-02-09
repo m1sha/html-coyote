@@ -1,5 +1,5 @@
 import { BaseCollection } from "./base-collection"
-import DomProvider from "./dom-provider"
+import {DomProvider} from "./dom-provider"
 import { iftrue } from "./err"
 import { IContentFile } from "./fs-utils"
 

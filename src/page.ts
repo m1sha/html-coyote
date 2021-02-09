@@ -1,5 +1,5 @@
 import {IContentFile} from "./fs-utils"
-import DomProvider from "./dom-provider"
+import {DomProvider} from "./dom-provider"
 import { BaseCollection } from "./base-collection"
 import { iftrue } from "./err"
 
@@ -13,11 +13,11 @@ export class Page extends DomProvider  {
         const templates = this.getTemplates()
         const r = {}
         for(let i=0; i < templates.length; i++){
-            const template = templates[i]
-            const slot = template.attributes.getNamedItem("slot")
-            iftrue(!slot || !slot.nodeValue, `tag template hasn't contain required attribute slot`) 
+            const template = templates.get(i)
+            const slot = template.getAttributeByName("slot")
+            iftrue(!slot || !slot.value, `tag template hasn't contain required attribute slot`) 
             
-            r[slot.nodeValue] = template.innerHTML
+            r[slot.value] = template.innerHTML
         }
         return r
     }

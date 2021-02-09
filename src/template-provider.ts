@@ -1,4 +1,5 @@
 import _ from "lodash"
+import { IDomAttribute, TemplateDomElement } from "./dom-provider"
 import { iffalse, iftrue } from "./err"
 import { IContentFile } from "./fs-utils"
 import { codeBlock } from "./msg"
@@ -20,14 +21,14 @@ export class TemplateProvider{
         return comp(data)
     }
 
-    getTemplateInfo(template: HTMLTemplateElement): TemplateInfo{
+    getTemplateInfo(template: TemplateDomElement): TemplateInfo{
     
-        const ifAttr = template.attributes.getNamedItem("if")
-        const elifAttr = template.attributes.getNamedItem("elif")
-        const elseAttr = template.attributes.getNamedItem("else")
-        const loopAttr = template.attributes.getNamedItem("loop")
-        const slotAttr = template.attributes.getNamedItem("slot")
-        const markdownAttr = template.attributes.getNamedItem("markdown")
+        const ifAttr = template.getAttributeByName("if")
+        const elifAttr = template.getAttributeByName("elif")
+        const elseAttr = template.getAttributeByName("else")
+        const loopAttr = template.getAttributeByName("loop")
+        const slotAttr = template.getAttributeByName("slot")
+        const markdownAttr = template.getAttributeByName("markdown")
     
         return new TemplateInfo(this, ifAttr, elifAttr, elseAttr, loopAttr, slotAttr, markdownAttr).validate()
     }
@@ -40,21 +41,21 @@ export class TemplateInfo {
     readonly hasLoop: boolean
     readonly hasSlot: boolean
     readonly hasMarkdown: boolean
-    readonly ifAttr: Attr
-    readonly elifAttr: Attr
-    readonly loopAttr: Attr
-    readonly slotAttr: Attr
-    readonly markdownAttr: Attr
+    readonly ifAttr: IDomAttribute
+    readonly elifAttr: IDomAttribute
+    readonly loopAttr: IDomAttribute
+    readonly slotAttr: IDomAttribute
+    readonly markdownAttr: IDomAttribute
     private provider: TemplateProvider
 
     constructor(
         provider: TemplateProvider,
-        ifAttr: Attr,
-        elifAttr: Attr,
-        elseAttr: Attr,
-        loopAttr: Attr,
-        slotAttr: Attr,
-        markdownAttr: Attr) {
+        ifAttr: IDomAttribute,
+        elifAttr: IDomAttribute,
+        elseAttr: IDomAttribute,
+        loopAttr: IDomAttribute,
+        slotAttr: IDomAttribute,
+        markdownAttr: IDomAttribute) {
             this.provider = provider
             this.hasIf = !!ifAttr
             this.hasElif = !!elifAttr
@@ -71,8 +72,8 @@ export class TemplateInfo {
 
     validate(): TemplateInfo{
         iftrue(this.hasIf && (this.hasElif || this.hasElse), "Template has wrong statement 'if-elif-else'")
-        iftrue(this.hasIf && (!this.ifAttr.nodeValue || !this.ifAttr.nodeValue.trim()), "Template hasn't contain 'if' condition")
-        iftrue(this.hasLoop && (!this.loopAttr.nodeValue || !this.loopAttr.nodeValue.trim()), "Template hasn't contain 'loop' condition")
+        iftrue(this.hasIf && (!this.ifAttr.value || !this.ifAttr.value.trim()), "Template hasn't contain 'if' condition")
+        iftrue(this.hasLoop && (!this.loopAttr.value || !this.loopAttr.value.trim()), "Template hasn't contain 'loop' condition")
 
         return this
     }
@@ -81,14 +82,14 @@ export class TemplateInfo {
     getIfResult(data: unknown): boolean{
         iffalse(this.hasIf, "Template hasn't contain 'if' statement")
         
-        const value = utils.preparing(this.ifAttr.nodeValue, "data")
+        const value = utils.preparing(this.ifAttr.value, "data")
         let res = false
         try{
             res = eval(value)
         }catch(e){
             const filename = this.provider.originalProvider ? this.provider.originalProvider.file.name:  this.provider.file.name
             const content = this.provider.originalProvider ? this.provider.originalProvider.file.content:  this.provider.file.content
-            codeBlock(this.ifAttr.nodeValue, content,  filename)
+            codeBlock(this.ifAttr.value, content,  filename)
             throw e
         }
         
@@ -98,7 +99,7 @@ export class TemplateInfo {
     // eslint-disable-next-line
     getLoopInfo(data: unknown){
         iffalse(this.hasLoop, "Template hasn't contain 'loop' statement")
-        const info = utils.parseLoopStatement(this.loopAttr.nodeValue)
+        const info = utils.parseLoopStatement(this.loopAttr.value)
         let items = null
         try {
             items = utils.getValueFromObject(data, info.items)
@@ -106,7 +107,7 @@ export class TemplateInfo {
         } catch (e) {
             const filename = this.provider.originalProvider ? this.provider.originalProvider.file.name:  this.provider.file.name
             const content = this.provider.originalProvider ? this.provider.originalProvider.file.content:  this.provider.file.content
-            codeBlock(this.loopAttr.nodeValue, content,  filename)
+            codeBlock(this.loopAttr.value, content,  filename)
             throw e
         }
         return {
