@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.com/m1sha/html-coyote.svg?branch=main)](https://travis-ci.com/m1sha/html-coyote)
+
 # ⚠️ Warning!!! ⚠️
 
 The project is in active development and has a lot of bugs. Use it for informational purposes only. First working version will begin 0.1.x.
