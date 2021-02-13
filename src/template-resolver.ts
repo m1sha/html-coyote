@@ -74,7 +74,7 @@ export class TemplateResolver {
         let count = 0
         
         if (templates.length === 0){
-            domProvider.innerHTML = domProvider.resolveExpression(domProvider.innerHTML, this.content.data)
+            domProvider.innerHTML = domProvider.resolveExpression(domProvider.innerHTML, data)
             return
         }
 
@@ -106,7 +106,7 @@ export class TemplateResolver {
             }
 
             if (info.hasMarkdown){
-                ifnull(data.markdown, `Can't found markdown-document`)
+                ifnull(data.markdown, `The page has <template markdown></template> but can't found markdown-document`)
                 const html = data.markdown["content"]
                 template.inject(html)
             }
