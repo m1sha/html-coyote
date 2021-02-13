@@ -86,7 +86,7 @@ export class MdMeta {
 
 }
 
-function cutMeta(value: string): string{
+function cutMeta(value: string): string{ //FIXME MdMeta.cutMeta write normal message if file has incorrect meta-header
     const temp = []
     const lines = value.split("\n")
     let index = 0

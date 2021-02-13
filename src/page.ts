@@ -1,5 +1,5 @@
 import {IContentFile} from "./fs-utils"
-import DomProvider from "./dom-provider"
+import {DomProvider} from "./dom-provider"
 import { BaseCollection } from "./base-collection"
 import { iftrue } from "./err"
 
@@ -10,32 +10,34 @@ export class Page extends DomProvider  {
     }
 
     get templates(): unknown{
-        const templates = this.document.getElementsByTagName("template")
+        const templates = this.getTemplates()
         const r = {}
         for(let i=0; i < templates.length; i++){
-            const template = templates[i]
-            const slot = template.attributes.getNamedItem("slot")
-            iftrue(!slot || !slot.nodeValue, `tag template hasn't contain required attribute slot`) 
+            const template = templates.get(i)
+            const slot = template.getAttributeByName("slot")
+            iftrue(!slot || !slot.value, `tag template hasn't contain required attribute slot`) 
             
-            r[slot.nodeValue] = template.innerHTML
+            r[slot.value] = template.innerHTML
         }
         return r
     }
 
     get layoutName(): string{
-        const nodes = this.document.childNodes
-        for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
-            if (node.nodeType === 8 && node.nodeValue.startsWith("#layout=")) {  //TODO: If more than an one throwing the error "#layout must be one only"
-                let name = node.nodeValue.substring(8)  
-                if (name.endsWith(".html")){
-                    name = name.substring(0, name.length - 5)
-                }
-
-                return name
-            }
+        const layouts = this.getComments().filter(p=>p.startsWith("#layout="))
+        if (!layouts){
+            throw new Error(`#layout directive isn't defined`)
         }
-        return ""
+
+        if (layouts.length > 1){
+            throw new Error(`#layout is defined more than one time`)
+        }
+
+        let name = layouts[0].substring(8)  
+        if (name.endsWith(".html")){
+            name = name.substring(0, name.length - 5)
+        }
+
+        return name
     }
 
 }

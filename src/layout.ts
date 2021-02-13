@@ -1,15 +1,11 @@
 import {IContentFile} from "./fs-utils"
-import DomProvider from "./dom-provider"
+import { DomProvider } from "./dom-provider"
 import { BaseCollection } from "./base-collection"
 import { ifnull } from "./err"
 
 export class Layout extends DomProvider {
     constructor(file: IContentFile){
         super(file)
-    }
-
-    findSlots(): HTMLCollectionOf<HTMLSlotElement>{
-        return this.document.getElementsByTagName("slot")
     }
 }
 

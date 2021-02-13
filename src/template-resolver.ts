@@ -1,6 +1,6 @@
 import __ from './strings'
 import { Content } from "./content";
-import DomProvider from "./dom-provider";
+import { DomElementCollectionOf, DomProvider, PartDomElement, TemplateDomElement } from "./dom-provider";
 import { Layout } from "./layout";
 import { Page } from "./page";
 import { Part, PartCollection } from "./part";
@@ -45,23 +45,22 @@ export class TemplateResolver {
     }
 
     private resolvePage(): boolean{
-        
         ifnull(this.page, __.PageShouldBeDefined)
         this.page.attach()
 
-        const slots = this.layout.findSlots()
+        const slots = this.layout.getSlots()
         if (slots.length == 0){
             return false
         }
 
         let count = 0
         while(slots.length > 0){
-            const slot = slots[0]
+            const slot = slots.first
             ifeq(slots.length, count, __.infinityLoopDetected(slot.name))
             count = slots.length
             
             const frag = this.page.templates[slot.name]
-            slot.replaceWith(DomProvider.createFragment(frag))
+            slot.inject(frag)
         }
 
         return true
@@ -69,21 +68,22 @@ export class TemplateResolver {
 
     private resolveTemplate(domProvider: DomProvider): void{
         const data = this.content.data
-        const templates = domProvider.document.getElementsByTagName("template")
+        const templates = domProvider.getTemplates()
         let ifResult = null
         let _else = false
         let count = 0
+        
         if (templates.length === 0){
-            domProvider.document.documentElement.innerHTML = domProvider.applyTemplateData(domProvider.document.documentElement.innerHTML, this.content.data)
+            domProvider.innerHTML = domProvider.resolveExpression(domProvider.innerHTML, data)
             return
         }
 
         while(templates.length > 0){
             ifeq(templates.length, count, __.infinityLoopDetected(domProvider.name))
             count = templates.length
-            const template = templates[0]
+            const template = templates.first
             const info = domProvider.getTemplateInfo(template)
-
+            
             if (info.hasIf){
                 ifResult = info.getIfResult(data)
                 this.applyIf(domProvider, ifResult, template)
@@ -106,14 +106,14 @@ export class TemplateResolver {
             }
 
             if (info.hasMarkdown){
-                ifnull(data.markdown, `Can't found markdown-document`)
+                ifnull(data.markdown, `The page has <template markdown></template> but can't found markdown-document`)
                 const html = data.markdown["content"]
-                template.replaceWith(DomProvider.createFragment(html))
+                template.inject(html)
             }
 
             if (info.empty){
                 const html = this.resolveTemplateNested(domProvider, template)
-                template.replaceWith(DomProvider.createFragment(html))
+                template.inject(html)
             }
         }
     }
@@ -124,7 +124,7 @@ export class TemplateResolver {
         while(go){
             for(const part of this.parts){
           
-                const tags = domProvider.document.getElementsByTagName(part.name)
+                const tags = domProvider.getParts(part.name)
                 if (!tags.length){
                     go = false
                     continue
@@ -137,7 +137,7 @@ export class TemplateResolver {
         
     }
 
-    private resolvePart(tags: HTMLCollectionOf<Element>, domProvider: DomProvider, part: Part){
+    private resolvePart(tags: DomElementCollectionOf<PartDomElement>, domProvider: DomProvider, part: Part){
         let index = 0
         while  (tags.length > 0) { 
             ifeq(tags.length, index, __.infinityLoopDetected(domProvider.name))
@@ -146,81 +146,82 @@ export class TemplateResolver {
             part.attach()
             const attrs = part.attrs
    
-            const tag = tags[0]
+            const tag = tags.first
             this.collectAttributeValues(tag, attrs)
             this.resolveTemplate(part)
             
             const html = part.toHtml()
-            tag.replaceWith(DomProvider.createFragment(html))
+            tag.inject(html)
         }
     }
 
-    private applyIf(domProvider: DomProvider, ifResult: boolean, template: HTMLTemplateElement){
+    private applyIf(domProvider: DomProvider, ifResult: boolean, template: TemplateDomElement){
         if (ifResult){
             const html = this.resolveTemplateNested(domProvider, template)
-            template.replaceWith(DomProvider.createFragment(html))
+            template.inject(html)
             return
         }
         
-        template.replaceWith(DomProvider.createFragment(""))
+        template.remove()
     }
 
-    private applyElse(domProvider: DomProvider, ifResult: unknown, template: HTMLTemplateElement){
+    private applyElse(domProvider: DomProvider, ifResult: unknown, template: TemplateDomElement){
         ifeq(ifResult, null, `Part '${domProvider.name}' not found if statement`)
         if (!ifResult){
            const html = this.resolveTemplateNested(domProvider, template)
-           template.replaceWith(DomProvider.createFragment(html))
+           template.inject(html)
            return
         }
         
-        template.replaceWith(DomProvider.createFragment(""))
+        template.remove()
     }
 
-    private applyLoop(domProvider: DomProvider, { item, items }, template: HTMLTemplateElement){
+    private applyLoop(domProvider: DomProvider, { item, items }, template: TemplateDomElement){
         const frags = []
         const data = this.content.data
         for (let i = 0; i < items.length; i++) {
             data[item] = items[i];
             const html = this.resolveTemplateNested(domProvider, template)
-            const component = new DomProvider(new ContentInMemory("part.html", html))
+            const component = new DomProvider(new ContentInMemory("part.html", html), domProvider)
             component.attach()
             this.resolveParts(component)
             frags.push(component.toHtml())
         }
         
-        template.replaceWith(DomProvider.createFragment(frags.join("")))
+        template.inject(frags.join(""))
     }
 
-    private resolveTemplateNested(domProvider: DomProvider, template: HTMLTemplateElement): string{
-        const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML))
+    private resolveTemplateNested(domProvider: DomProvider, template: TemplateDomElement): string{
+        const el = new DomProvider(new ContentInMemory("frag.html", template.innerHTML), domProvider)
         el.attach()
         this.resolveTemplate(el)
         const body = el.documentBody
-        return domProvider.applyTemplateData(body, this.content.data)
+        return domProvider.resolveExpression(body, this.content.data)
     }
 
     // private resolvePartNested(){
 
     // }
 
-    private collectAttributeValues(elem: Element, attrs: string[]){
+    private collectAttributeValues(elem: PartDomElement, attrs: string[]){
         for(let i = 0; i < attrs.length; i++){ 
             const attr = attrs[i]
             let value = null
             
             if (attr.startsWith("@")){
-                value =  elem.innerHTML
+                value = elem.innerHTML
             } 
             
             if (attr.startsWith(".")) {
                 const a = attr.substring(1)
-                let attrValue = elem.attributes[':' + a]
+                
+                let attrValue = elem.getAttributeByName(':' + a)
                 if (attrValue){
-                    value = utils.getValueFromObjectSafely(this.content.data, attrValue.nodeValue)
+                    value = utils.getValueFromObject(this.content.data, attrValue.value)
                 } else{
-                    attrValue = elem.attributes[a]
-                    ifnull(attrValue, `Tag '${elem.tagName.toLocaleLowerCase()}' hasn't contain attribute '${a}'`);
-                    value = attrValue.nodeValue
+                    attrValue = elem.getAttributeByName(a)
+                    ifnull(attrValue, `Tag '${elem.name}' hasn't contain attribute '${a}'`);
+                    value = attrValue.value
                 }
             }
 

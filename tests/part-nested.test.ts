@@ -107,31 +107,38 @@ test("parts with objects as parameters", ()=>{
     const layout = createLayout("layout", `
     <html>
         <body>
-            <main-menu :items="menu" />
+            <main>
+                <main-menu />
+                <slot name="content"></slot>
+            </main>
         </body>
     </html>
     `)
     const menu = createFile("main-menu", `
-    <!--#.items-->
+    <!--#-->
     <template>
         <nav>
             <ul>
-                <template loop="item of items">
-                    <main-menu-item :item="item" />
+                <template loop="item of menu">
+                    <main-menu-item :name="item.name" :title="item.title" :url="item.url" />
                 </template>
             </ul>
         </nav>
     </template>
     `)
     const menuItem = createFile("main-menu-item", `
-    <!--#.item-->
+    <!--#
+    .name
+    .title
+    .url
+    -->
     <template>
         <li>
-            <template if="__pageName == item.name">
-                <span>{{item.title}}</span>
+            <template if="__pageName == name">
+                <span>{{title}}</span>
             </template>
             <template else>
-                <a href="{{item.url}}">{{item.title}}</a>
+                <a href="{{url}}">{{title}}</a>
             </template>
         </li>
     </template>
