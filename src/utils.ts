@@ -85,7 +85,7 @@ export default class utils {
   }
 
   static toJson(value: string): unknown{
-    return yaml.safeLoad(value)
+    return yaml.load(value)
   }
 
   static getValueFromObject(obj: unknown, propName: string): unknown{
