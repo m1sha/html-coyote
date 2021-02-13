@@ -12,6 +12,6 @@ install:
   - npm install jsdom
   - npm install marked
   - npm install js-yaml
-  - npm install lodash
+  - npm install chalk
 script:
   - npm test
