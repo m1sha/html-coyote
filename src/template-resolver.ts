@@ -74,7 +74,7 @@ export class TemplateResolver {
         let count = 0
         
         if (templates.length === 0){
-            domProvider.innerHTML = domProvider.applyTemplateData(domProvider.innerHTML, this.content.data)
+            domProvider.innerHTML = domProvider.resolveExpression(domProvider.innerHTML, this.content.data)
             return
         }
 
@@ -196,7 +196,7 @@ export class TemplateResolver {
         el.attach()
         this.resolveTemplate(el)
         const body = el.documentBody
-        return domProvider.applyTemplateData(body, this.content.data)
+        return domProvider.resolveExpression(body, this.content.data)
     }
 
     // private resolvePartNested(){
