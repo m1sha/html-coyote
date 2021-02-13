@@ -59,7 +59,10 @@ export class TemplateResolver {
             ifeq(slots.length, count, __.infinityLoopDetected(slot.name))
             count = slots.length
             
-            const frag = this.page.templates[slot.name]
+            let frag = this.page.templates[slot.name]
+            if (this.content)
+                frag = this.page.resolveExpression(frag, this.content.data)
+                
             slot.inject(frag)
         }
 

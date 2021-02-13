@@ -4,7 +4,8 @@ import {
     createResolver, 
     createContent, 
     createFile,
-    createParts} from "./helpers"
+    createParts,
+    createMd} from "./helpers"
 import strings from "../src/strings"
 
 test("layout-nested. slot in part", ()=> {
@@ -83,4 +84,47 @@ test("expression in title tag", ()=>{
     const resolver = createResolver(layout, page, null, content)
     const html = resolver.resolve()
     expect(html).toContain("Hello")
+})
+
+test("expression form md in title tag", ()=>{
+    const layoutTemplate = `<html>
+    <head>
+        <slot name="header"></slot>
+    <head>
+    <body>
+        <slot name="content"></slot>
+    </body>
+    </html>
+    `
+    const pageTemplate = `
+    <!--#layout=layout-->
+    <template slot="header">
+        <title>
+            {{meta.title}}
+        </title>
+    </template>
+    <template slot="content">
+        <template markdown></template>
+    </template>
+    `
+    
+    const markdown = `---
+page: index
+title: "Title From Markdown"
+---
+
+# This title was written in the Markdown file
+    `
+    
+    const layout = createLayout("layout", layoutTemplate)
+    const page = createPage("index", pageTemplate)
+    const content = createContent()
+    const md = createMd("index.md", markdown)
+    md.open()
+    content.add(strings.Markdown, md)
+    content.add("meta", md.meta.data)
+
+    const resolver = createResolver(layout, page, null, content)
+    const html = resolver.resolve()
+    expect(html).toContain("Title From Markdown")
 })
