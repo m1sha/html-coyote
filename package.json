@@ -10,6 +10,8 @@
     "build": "cross-env webpack",
     "cli:run": "node cli/cli.js run",
     "cli:publish": "node cli/cli.js publish",
+    "debug:run": "cross-env run=9080 ts-node src/launcher.ts",
+    "debug:publish": "cross-env publish=true ts-node src/launcher.ts",
     "test": "npx jest",
     "test:watch": "npx jest --watch"
   },
