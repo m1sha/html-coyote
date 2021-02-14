@@ -1,6 +1,6 @@
 {
   "name": "html-coyote",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "HTML Coyote is a generator static content for creating static HTML sites",
   "main": "./dist/index.js",
   "bin": {
@@ -57,5 +57,9 @@
     "webpack": "^5.21.2",
     "webpack-cli": "^4.5.0",
     "webpack-node-externals": "^2.5.2"
-  }
+  },
+  "files": [
+    "dist",
+    "cli"
+  ]
 }

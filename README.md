@@ -60,12 +60,15 @@ Browse to http://127.0.0.1:7001
 ### Pages
 ./site/pages/page.html
 ```html
+<!--#layout=layout-->
 <template slot="header">
     <title>{{ meta.title }}</title>
 </template>
 
 <template slot="content">
-    <template markdown></template>
+    <div>
+        <template markdown></template>
+    </div>
 </template>
 ```
 ### Content
@@ -73,11 +76,11 @@ Browse to http://127.0.0.1:7001
 ```markdown
 ---
 page: page
-title: "Home page"
+title: "HTML-Coyote: Home page"
 ---
 
 # Home page
-Some content
+This is some content on the home page
 ```
 
 ./site/content/about.md
@@ -87,8 +90,8 @@ page: page
 title: "About page"
 ---
 
-# Home page
-Some content
+# About page
+This is some content on the about page
 ```
 
 ./site/content/settings.yml
@@ -109,11 +112,11 @@ menu:
 
 <template>
     <li>
-        <template if="__pageName === name">
+        <template if="markdown.name === name">
             <span>{{content}}</span>
         </template>
-        <template>
-            <a href="`{{url}}">`{{content}}</a>
+        <template else>
+            <a href="{{url}}">{{content}}</a>
         </template>
     </li>
 </template>
@@ -122,7 +125,7 @@ menu:
 ## Build to Production
 
 ```bash
-$ coyo build
+$ coyo publish
 ```
 
 ## Live Demo
