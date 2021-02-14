@@ -1,25 +1,6 @@
 import path from "path"
-import fs from "fs"
 import liveServer from "live-server"
 import * as chokidar from "chokidar"
-
-function watchHandler (event, pth: string, publishDir: string, assetsDir: string){
-    
-    if (fs.statSync(pth).isFile()) {
-        const sub = pth.substr(assetsDir.length)
-        const distFileName = path.join(publishDir, sub)
-        const dirName = path.dirname(distFileName)
-        const srcCtime = fs.statSync(pth).ctime
-        const distCtime = fs.statSync(distFileName).ctime
-        if ( srcCtime > distCtime ){
-           // fs.mkdirSync(dirName)
-            fs.copyFileSync(pth, distFileName)
-        
-          console.log(dirName)
-          console.log(distFileName)
-        }
-    }
-}
 
 export default class DevServer {
     baseDir: string
@@ -30,14 +11,21 @@ export default class DevServer {
         this.port = port
     }
 
-    start(): void{
-        const assetsDir = path.resolve(this.baseDir, "/assets")
-        const publishDir = path.resolve(this.baseDir, "../publish")
+    start(changed: OnFileChanged): void{
+        const watchItems = [
+            { catalog: "assets", dir: path.join(this.baseDir, "/assets")},
+            { catalog: "content", dir: path.join(this.baseDir, "/content")},
+            { catalog: "layouts", dir: path.join(this.baseDir, "/layouts")},
+            { catalog: "pages", dir: path.join(this.baseDir, "/pages")},
+            { catalog: "parts", dir: path.join(this.baseDir, "/parts")}
+        ]
+        const publishDir = path.join(this.baseDir, "../publish")
 
-        chokidar.watch(assetsDir).on("all", (event, pth)=> {
-            console.log(pth)
-            watchHandler(event, pth, publishDir, assetsDir)
-        })
+        for(const item of watchItems){
+            chokidar.watch(item.dir).on("all", (event, pth)=> {
+                changed(new ChangeEvent(item.catalog, event, pth, publishDir, item.dir))
+            })
+        }
 
         const params = {
             port: 7001, // Set the server port. Defaults to 8080.
@@ -51,5 +39,23 @@ export default class DevServer {
 
         params.port = this.port
         liveServer.start(params);
+    }
+}
+
+export type OnFileChanged = (e: ChangeEvent) => void
+
+export class ChangeEvent {
+    readonly catalog: string
+    readonly event: string
+    readonly pth: string
+    readonly publishDir: string
+    readonly assetsDir: string
+
+    constructor (catalog: string, event: string, pth: string, publishDir: string, assetsDir: string){
+        this.catalog = catalog
+        this.event = event
+        this.pth = pth
+        this.publishDir = publishDir
+        this.assetsDir = assetsDir
     }
 }
