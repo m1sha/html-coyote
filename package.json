@@ -1,6 +1,6 @@
 {
   "name": "html-coyote",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "HTML Coyote is a generator static content for creating static HTML sites",
   "main": "./dist/index.js",
   "bin": {
