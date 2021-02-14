@@ -1,7 +1,0 @@
-siteTitle: Croix
-menu:
-    - { name: 'index', href: 'index.html', text: 'Home' }
-    - { name: 'about', href: 'about.html', text: 'About' }
-    - { name: 'blog', href: 'blog-01-03-20.html', text: 'Blogs' }
-    - { name: 'contacts', href: 'contacts.html', text: 'Contacts' }
-    - { name: 'galary', href: 'galary.html', text: 'Galary' }

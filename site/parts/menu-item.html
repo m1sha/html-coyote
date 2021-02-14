@@ -1,17 +1,16 @@
 <!--#
 .name
-.href
+.url
 @content
 -->
 
-<template if="__pageName === name">
+<template>
     <li>
-        <span>{{content}}</span>
-        <slot name="submenu"></slot>
-    </li>
-</template>
-<template else>
-    <li>
-        <a href="{{href}}">{{content}}</a>
+        <template if="markdown.name === name">
+            <span>{{content}}</span>
+        </template>
+        <template else>
+            <a href="{{url}}">{{content}}</a>
+        </template>
     </li>
 </template>

@@ -1,33 +1,27 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta charset="UTF-8">
-<link rel="stylesheet" href="css/github-markdown.css">
-<link rel="stylesheet" href="css/style.css">
-<slot name="header"></slot>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <slot name="header"></slot>
 </head>
 <body>
-    <header>
-        <h1>
-            <template>
-                {{siteTitle}}
-            </template>
-        </h1>
-    </header>
-    <section class="conainer">
+    <site-header></site-header>
+    <section class="container">
         <nav>
-            <ul>
-                <template loop="item of menu">
-                    <menu-item name="{{item.name}}" href="{{item.href}}">
-                        {{item.text}}
-                    </menu-item>
-                </template>
-           </ul>
+            <template loop="item of menu">
+                <menu-item :name="item.name" :url="item.url">
+                    {{ item.title }}
+                </menu-item>
+            </template>
         </nav>
-        <section class="content">
+        <article>
             <slot name="content"></slot>
-        </section>
+        </article>
     </section>
-    <footer></footer>
+    <site-footer></site-footer>
 </body>
 </html>

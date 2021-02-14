@@ -1,0 +1,4 @@
+siteTitle: HTML-Coyote
+menu:
+    - { name: 'index', url: 'index.html', title: 'Home' }
+    - { name: 'about', url: 'about.html', title: 'About' }
