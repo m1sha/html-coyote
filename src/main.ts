@@ -11,24 +11,24 @@ import { PartCollection } from './part'
 
 export function run(watch: boolean, port: number): void {
   const dir =path.resolve(process.cwd(), "site")
-  
   info(`work directory: ${dir}`)
-  const site = new Site(dir)
-  const layouts = site.layouts
-  const pages = site.pages
-  const parts = site.parts
-  const content = site.content
   
-
   if (watch){
     const server = new DevServer(dir, port)
-    server.start()
+    server.start(() => {
+      _run(dir)
+    })
   } else {
-    info(__.StartSiteAssembly)
-    publishPages(site, layouts, pages, parts, content)
-    publishAssets(site)
-    info(__.EndSiteAssembly)
+    _run(dir)
   }
+}
+
+function _run(dir: string){
+  const site = new Site(dir)
+  info(__.StartSiteAssembly)
+  publishPages(site, site.layouts, site.pages, site.parts, site.content)
+  publishAssets(site)
+  info(__.EndSiteAssembly)
 }
 
 export function createNew(): void{
