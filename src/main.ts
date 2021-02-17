@@ -15,8 +15,7 @@ export function run(watch: boolean, port: number): void {
   
   if (watch){
     const server = new DevServer(dir, port)
-    server.start(e => {
-      console.log(e)
+    server.start(() => {
       _run(dir)
     })
   } else {
