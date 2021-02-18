@@ -1,6 +1,6 @@
 {
     "env": {
-        "browser": true,
+        "node": true,
         "es2021": true
     },
     "extends": [
@@ -16,7 +16,8 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "no-var":"error"
+        "no-var": "error",
+        "semi": ["error", "never"]
     },
-    "ignorePatterns": ["cli/cli.js"]
+    "ignorePatterns": ["cli/cli.js", "dist/index.js", "**/*.js", "**/publish/*.*"]
 }
