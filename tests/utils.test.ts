@@ -13,9 +13,9 @@ test("utils.preparing", ()=>{
     ]
 
     for (let i = 0; i < data.length; i++) {
-        const value1 = data[i][0];
-        const value2 = data[i][1];
-        const value3 = data[i][2];
+        const value1 = data[i][0]
+        const value2 = data[i][1]
+        const value3 = data[i][2]
         expect(utils.preparing(value1, value2)).toEqual(value3)
     }
 })

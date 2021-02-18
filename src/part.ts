@@ -14,7 +14,7 @@ export class Part extends DomProvider {
         const comments = this.getComments().filter(p=>p.startsWith("#"))
         
         for (let i = 0; i < comments.length; i++) {
-            const comment = comments[i];
+            const comment = comments[i]
             comment
                 .substring(1)
                 .split("\n")

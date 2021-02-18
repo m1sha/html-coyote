@@ -8,7 +8,7 @@ export abstract class BaseCollection<T> {
     constructor(files: ContentFile[]){
         this.items = []
         for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+            const file = files[i]
             this.items.push(this.createItem(file))
         }
         this.length = this.items.length
@@ -17,7 +17,7 @@ export abstract class BaseCollection<T> {
     abstract createItem(file: ContentFile): T
 
     [Symbol.iterator](): IterableIterator<T>{
-        let index = 0;
+        let index = 0
         return  {
           next: () => {
             if (index < this.items.length) {
@@ -31,6 +31,6 @@ export abstract class BaseCollection<T> {
     
     add(item: T): this & BaseCollection<T>{
       this.items.push(item)
-      return this;
+      return this
     }
 }

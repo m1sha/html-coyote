@@ -57,7 +57,7 @@ test ("loop-statement", ()=>{
     content.add("values", [ {name: "value 1"}, {name: "value 2"}, {name: "value 3"} ])
     const resolver = createResolver(root, null, null, content)
     resolver.resolve()
-    const html = root.toHtml();
+    const html = root.toHtml()
     expect(html).toContain("<p>value 1</p>")
     expect(html).toContain("<p>value 2</p>")
     expect(html).toContain("<p>value 3</p>")

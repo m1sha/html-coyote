@@ -58,7 +58,7 @@ export class Site{
         for(let i = 0; i < files.length; i++){
             const file = files[i]
             let distFilename = join(dist, file.name)
-            let errorMessage = null;
+            let errorMessage = null
 
             if (file.dir){
                 try{

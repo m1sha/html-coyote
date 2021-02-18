@@ -1,10 +1,10 @@
-import { Layout } from "../src/layout";
-import { ContentInMemory, IContentFile } from "../src/fs-utils";
-import { Part, PartCollection } from "../src/part";
-import { Page } from "../src/page";
-import { Content } from "../src/content";
-import { TemplateResolver } from "../src/template-resolver";
-import { MdDocument } from "../src/md-document";
+import { Layout } from "../src/layout"
+import { ContentInMemory, IContentFile } from "../src/fs-utils"
+import { Part, PartCollection } from "../src/part"
+import { Page } from "../src/page"
+import { Content } from "../src/content"
+import { TemplateResolver } from "../src/template-resolver"
+import { MdDocument } from "../src/md-document"
 
 export function createLayout(name: string, content: string ): Layout{
     return new Layout(createFile(name, content))
@@ -23,7 +23,7 @@ export function createFile(name: string, content: string): IContentFile{
 }
 
 export function createParts(parts? : IContentFile[]): PartCollection{
-    return new PartCollection(!parts ? []: parts);
+    return new PartCollection(!parts ? []: parts)
 }
 
 export function createContent(files?: IContentFile[]): Content{

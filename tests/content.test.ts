@@ -17,8 +17,8 @@ foo: true
         new ContentInMemory("foo.yml", fileContent2)
     ])
     
-    expect(content.data.menu).toBeDefined();
-    expect(content.data.foo).toBeTruthy();
+    expect(content.data.menu).toBeDefined()
+    expect(content.data.foo).toBeTruthy()
 })
 
 test("Content add data", () => {

@@ -106,7 +106,7 @@ export default class utils {
       for (let i = 1; i < keys.length; i++) {
         if (!result) return null
 
-        const key = keys[i];
+        const key = keys[i]
         if (!Object.prototype.hasOwnProperty.call(result, key)) 
           throw new Error(`Property ${key} isn't define in ${name}`)
           

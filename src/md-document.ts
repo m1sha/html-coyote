@@ -1,8 +1,8 @@
-import { ContentFile, IContentFile } from "./fs-utils";
+import { ContentFile, IContentFile } from "./fs-utils"
 import marked from "marked"
-import { BaseCollection } from "./base-collection";
-import { ifnull } from "./err";
-import utils from "./utils";
+import { BaseCollection } from "./base-collection"
+import { ifnull } from "./err"
+import utils from "./utils"
 
 export class  MdDocument {
     private file: IContentFile
@@ -91,7 +91,7 @@ function cutMeta(value: string): string{ //FIXME MdMeta.cutMeta write normal mes
     const lines = value.split("\n")
     let index = 0
     for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+        const line = lines[i]
         if (line.trimEnd() === "---"){
             ++index
             continue
@@ -110,7 +110,7 @@ function readMeta(value): string{
     const lines = value.split("\n")
     let index = 0
     for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+        const line = lines[i]
         if (line.trimEnd() === "---"){
             ++index
             continue
@@ -121,7 +121,7 @@ function readMeta(value): string{
         }
 
         if (index > 1){
-            break;
+            break
         }
     }
 

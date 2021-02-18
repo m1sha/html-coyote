@@ -1,12 +1,12 @@
 import __ from './strings'
-import { Content } from "./content";
-import { DomElementCollectionOf, DomProvider, PartDomElement, TemplateDomElement } from "./dom-provider";
-import { Layout } from "./layout";
-import { Page } from "./page";
-import { Part, PartCollection } from "./part";
-import { ifdef, ifeq, ifnull } from './err';
-import utils from './utils';
-import { ContentInMemory } from './fs-utils';
+import { Content } from "./content"
+import { DomElementCollectionOf, DomProvider, PartDomElement, TemplateDomElement } from "./dom-provider"
+import { Layout } from "./layout"
+import { Page } from "./page"
+import { Part, PartCollection } from "./part"
+import { ifdef, ifeq, ifnull } from './err'
+import utils from './utils'
+import { ContentInMemory } from './fs-utils'
 
 export class TemplateResolver {
 
@@ -183,7 +183,7 @@ export class TemplateResolver {
         const frags = []
         const data = this.content.data
         for (let i = 0; i < items.length; i++) {
-            data[item] = items[i];
+            data[item] = items[i]
             const html = this.resolveTemplateNested(domProvider, template)
             const component = new DomProvider(new ContentInMemory("part.html", html), domProvider)
             component.attach()
@@ -223,7 +223,7 @@ export class TemplateResolver {
                     value = utils.getValueFromObject(this.content.data, attrValue.value)
                 } else{
                     attrValue = elem.getAttributeByName(a)
-                    ifnull(attrValue, `Tag '${elem.name}' hasn't contain attribute '${a}'`);
+                    ifnull(attrValue, `Tag '${elem.name}' hasn't contain attribute '${a}'`)
                     value = attrValue.value
                 }
             }

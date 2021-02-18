@@ -1,8 +1,8 @@
 
-import { Dictionary, KeyValuePairs } from './base-dictionary';
-import { ContentType, IContentFile } from './fs-utils';
-import { MdDocumentCollection } from './md-document';
-import utils from './utils';
+import { Dictionary, KeyValuePairs } from './base-dictionary'
+import { ContentType, IContentFile } from './fs-utils'
+import { MdDocumentCollection } from './md-document'
+import utils from './utils'
 
 export class Content {
     protected dictionary: Dictionary<unknown>
@@ -12,7 +12,7 @@ export class Content {
         this.dictionary = new Dictionary<unknown>()
         const mds = []
         for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+            const file = files[i]
             if (file.type === ContentType.YAML){
                 this.dictionary.assign(utils.toJson(file.content))
             }
